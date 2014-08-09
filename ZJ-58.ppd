@@ -1,0 +1,113 @@
+*PPD-Adobe:             "4.3"
+*FormatVersion:         "4.3"
+*FileVersion:           "1.1"
+*LanguageVersion:       English
+*LanguageEncoding:      ISOLatin1
+*PCFileName:            "zj58.ppd"
+*Manufacturer:          "Zijiang"
+*Product:               "(zj-58)"
+*1284DeviceID:          "MFG:Zijiang;CMD:Zijiang;MDL:ZJ-58;CLS:PRINTER;"
+*cupsVersion:           1.1
+*cupsManualCopies:      True
+*cupsModelNumber:       58
+*cupsFilter:            "application/vnd.cups-raster 0 rastertozj"
+*ModelName:             "ZJ-58"
+*ShortNickName:         "ZJ-58"
+*NickName:              "Zijiang ZJ-58"
+*PSVersion:             "(3010.000) 550"
+*LanguageLevel:         "3"
+*ColorDevice:           False
+*DefaultColorSpace:     Gray
+*FileSystem:            False
+*Throughput:            "1"
+*LandscapeOrientation:  Plus90
+*VariablePaperSize:     True
+*TTRasterizer:          Type42
+
+*OpenUI *PageSize/Media Size: PickOne
+*OrderDependency: 10 AnySetup *PageSize
+*DefaultPageSize: X48MMY210MM
+
+*PageSize X48MMY210MM/58mm x 210mm:         "<</PageSize[136 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageSize X48MMY297MM/58mm x 297mm:         "<</PageSize[136 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageSize X48MMY3276MM/58mm x 3276mm:       "<</PageSize[136 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+
+*CloseUI: *PageSize
+
+*OpenUI *PageRegion: PickOne
+*OrderDependency: 10 AnySetup *PageRegion
+*DefaultPageRegion: X48mmY210mm
+
+*PageRegion X48MMY210MM/58mm x 210mm:         "<</PageSize[164 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageRegion X48MMY297MM/58mm x 297mm:         "<</PageSize[164 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageRegion X48MMY3276MM/58mm x 3276mm:       "<</PageSize[164 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+
+*DefaultImageableArea: X48MMY210MM
+
+*ImageableArea X48MMY210MM:              "0 0 136 595"
+*ImageableArea X48MMY297MM:              "0 0 136 842"
+*ImageableArea X48MMY3276MM:             "0 0 136 9286"
+
+*DefaultPaperDimension: X48MMY210MM
+
+*PaperDimension X48MMY210MM:             "136 595"
+*PaperDimension X48MMY297MM:             "136 842"
+*PaperDimension X48MMY3276MM:            "136 9286"
+
+*MaxMediaWidth:  "136"
+*MaxMediaHeight: "9286"
+*HWMargins:      0 0 0 0
+*CustomPageSize True: "pop pop pop <</PageSize[5 -2 roll]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*ParamCustomPageSize Width:        1 points 48 136
+*ParamCustomPageSize Height:       2 points 48 9282
+*ParamCustomPageSize WidthOffset:  3 points 0 0
+*ParamCustomPageSize HeightOffset: 4 points 0 0
+*ParamCustomPageSize Orientation:  5 int 0 0
+
+*OpenGroup: CutGroup/Cut Options
+*OpenUI *FeedDist/Feed distance after print: PickOne
+*DefaultFeedDist: 2feed9mm
+*FeedDist 0feed3mm/feed 3mm: ""
+*FeedDist 1feed6mm/feed 6mm: ""
+*FeedDist 2feed9mm/feed 9mm: ""
+*FeedDist 3feed12mm/feed 12mm: ""
+*FeedDist 4feed15mm/feed 15mm: ""
+*FeedDist 5feed18mm/feed 18mm: ""
+*FeedDist 6feed21mm/feed 21mm: ""
+*FeedDist 7feed24mm/feed 24mm: ""
+*FeedDist 8feed27mm/feed 27mm: ""
+*FeedDist 9feed30mm/feed 30mm: ""
+*FeedDist 10feed33mm/feed 33mm: ""
+*FeedDist 11feed36mm/feed 36mm: ""
+*FeedDist 12feed39mm/feed 39mm: ""
+*FeedDist 13feed42mm/feed 42mm: ""
+*FeedDist 14feed45mm/feed 45mm: ""
+*CloseUI: *FeedDist
+
+
+*OpenUI *BlankSpace/Blank space at page's end: PickOne
+*DefaultBlankSpace: 1NoPrint
+*BlankSpace 0Print/Print: ""
+*BlankSpace 1NoPrint/Do not print: ""
+*CloseUI: *BlankSpace
+
+*CloseGroup: *CutGroup
+
+*OpenGroup: *CashDrawerGroup/Cash Drawer Control
+*OpenUI *CashDrawer1Setting/Cash Drawer 1: PickOne
+*DefaultCashDrawer1Setting: 0NotCashDrawer1
+*CashDrawer1Setting 0NotCashDrawer1/Not Cash Drawer 1: ""
+*CashDrawer1Setting 1NotCashDrawer1BeforePrinting/Cash Drawer 1 Before Printing: ""
+*CashDrawer1Setting 2NotCashDrawer1BeforePrinting/Cash Drawer 1 After Printing: ""
+*CloseUI: *CashDrawer1Setting
+
+*OpenUI *CashDrawer2Setting/Cash Drawer 2: PickOne
+*DefaultCashDrawer2Setting: 0NotCashDrawer2
+*CashDrawer2Setting 0NotCashDrawer2/Not Cash Drawer 2: ""
+*CashDrawer2Setting 1NotCashDrawer2BeforePrinting/Cash Drawer 2 Before Printing: ""
+*CashDrawer2Setting 2NotCashDrawer2BeforePrinting/Cash Drawer 2 After Printing: ""
+*CloseUI: *CashDrawer2Setting
+*CloseGroup: *CashDrawerGroup
+
+
+*% End

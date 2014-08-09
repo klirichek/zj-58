@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Installs zj-58 driver
+# Tested as working under Ubuntu 14.04
+
+/etc/init.d/cups stop
+cp rastertozj /usr/lib/cups/filter/
+cp ZJ-58.ppd /usr/share/cups/model/zjiang/
+cd /usr/lib/cups/filter
+chmod 755 rastertozj
+chown root:root rastertozj
+cd -
+/etc/init.d/cups start
