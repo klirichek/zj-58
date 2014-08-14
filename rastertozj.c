@@ -1,7 +1,3 @@
-/*
- * Include necessary headers...
- */
-
 // To get required headers, run
 // sudo apt-get install libcups2-dev libcupsimage2-dev
 #include <cups/cups.h>
@@ -199,18 +195,18 @@ void pageSetup()
 //////////////////////////////////////////////
 int main(int argc, char *argv[])
 {
-	int fd = 0;  // File descriptor providing CUPS raster data
+	int fd = 0;					// File descriptor providing CUPS raster data
 	cups_raster_t * ras = NULL; // Raster stream for printing
-	cups_page_header2_t header;     /* CUPS Page header                               */
-	int page = 0;        /* Current page                                    */
-	int y = 0;        /* Vertical position in page 0 <= y <= header.cupsHeight   */
+	cups_page_header2_t header; // CUPS Page header
+	int page = 0;				// Current page
+	int y = 0;					// Vertical position in page 0 <= y <= header.cupsHeight
 
-	unsigned char * rasterData   = NULL;     /* Pointer to raster data */
-	unsigned char * originalRasterDataPtr   = NULL;     /* Copy of original pointer for freeing buffer           */
+	unsigned char * rasterData   = NULL;	// Pointer to raster data from CUPS
+	unsigned char * originalRasterDataPtr   = NULL; // Copy of original pointer for freeing buffer
 
 	if (argc < 6 || argc > 7)
 	{
-		fputs("ERROR: rastertozj58 job-id user title copies options [file]\n", stderr);
+		fputs("ERROR: rastertozj job-id user title copies options [file]\n", stderr);
 		return EXIT_FAILURE;
 	}
 
@@ -352,4 +348,4 @@ int main(int argc, char *argv[])
 	return (page == 0)?EXIT_FAILURE:EXIT_SUCCESS;
 }
 
-// end of rastertostar.c
+// end of rastertozj.c
