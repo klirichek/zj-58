@@ -26,9 +26,9 @@
 
 *OpenUI *PageSize/Media Size: PickOne
 *OrderDependency: 10 AnySetup *PageSize
-*DefaultPageSize: X48MMY65MM
+*DefaultPageSize: X48MMY64MM
 
-*PageSize X48MMY65MM/58mm x 75mm:         "<</PageSize[136 182]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageSize X48MMY64MM/58mm x 74mm:         "<</PageSize[136 181]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 *PageSize X48MMY210MM/58mm x 210mm:         "<</PageSize[136 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 *PageSize X48MMY297MM/58mm x 297mm:         "<</PageSize[136 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 *PageSize X48MMY3276MM/58mm x 3276mm:       "<</PageSize[136 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
@@ -37,23 +37,23 @@
 
 *OpenUI *PageRegion: PickOne
 *OrderDependency: 10 AnySetup *PageRegion
-*DefaultPageRegion: X48MMY65MM
+*DefaultPageRegion: X48MMY64MM
 
-*PageRegion X48MMY65MM/58mm x 75mm:         "<</PageSize[164 219]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageRegion X48MMY64MM/58mm x 74mm:         "<</PageSize[164 219]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 *PageRegion X48MMY210MM/58mm x 210mm:         "<</PageSize[164 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 *PageRegion X48MMY297MM/58mm x 297mm:         "<</PageSize[164 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 *PageRegion X48MMY3276MM/58mm x 3276mm:       "<</PageSize[164 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 
-*DefaultImageableArea: X48MMY65MM
+*DefaultImageableArea: X48MMY64MM
 
-*ImageableArea X48MMY65MM:               "0 0 136 182"
+*ImageableArea X48MMY64MM:               "0 0 136 181"
 *ImageableArea X48MMY210MM:              "0 0 136 595"
 *ImageableArea X48MMY297MM:              "0 0 136 842"
 *ImageableArea X48MMY3276MM:             "0 0 136 9286"
 
-*DefaultPaperDimension: X48MMY65MM
+*DefaultPaperDimension: X48MMY64MM
 
-*PaperDimension X48MMY65MM:              "136 182"
+*PaperDimension X48MMY64MM:              "136 181"
 *PaperDimension X48MMY210MM:             "136 595"
 *PaperDimension X48MMY297MM:             "136 842"
 *PaperDimension X48MMY3276MM:            "136 9286"
