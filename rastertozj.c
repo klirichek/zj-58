@@ -269,7 +269,7 @@ int main(int argc, char *argv[])
 
 		while ( y < header.cupsHeight )
 		{
-            if ((y & 127) != 0)
+			if ((y & 127) != 0)
 				fprintf(stderr, "INFO: Printing page %d, %d%% complete...\n", page, (100 * y / header.cupsHeight));
 
 			int rest = header.cupsHeight-y;
@@ -299,9 +299,7 @@ int main(int argc, char *argv[])
 			}
 			int rest_bytes = rest * width_size;
 			int j;
-			for (j=0; j<rest_bytes;++j)
-				if (rasterData[j]!=0)
-					break;
+			for(j=0; (j<rest_bytes) && !rasterData[j]; j++);
 
 #ifdef DEBUGP
 	if (lfd) fprintf(lfd,"\nChecked %d bytes of %d for zero\n",j,rest_bytes);
@@ -317,7 +315,7 @@ int main(int argc, char *argv[])
 				skiplines(24);
 			
 			rasterheader(width_size,rest);
-			outputarray((char*)rasterData,width_size*24);
+			outputarray((char*)rasterData,rest_bytes);
 			skiplines(0);
 		}
 		
