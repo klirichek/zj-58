@@ -24,8 +24,6 @@ do
 	if [ $(gpio -g read $SHUTTER) -eq 0 ]; then
 		gpio -g write $LED 1
 		raspistill -n -t 200 -w 512 -h 384 -o - | lp
-#		raspistill -n -t 200 -w 512 -h 384 -o - | convert - -remap pattern:gray50 png:- | lp
-
 		sleep 1
 		# Wait for user to release button before resuming
 		while [ $(gpio -g read $SHUTTER) -eq 0 ]; do continue; done
