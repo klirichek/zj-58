@@ -1,6 +1,6 @@
 *PPD-Adobe:             "4.3"
 *FormatVersion:         "4.3"
-*FileVersion:           "1.1"
+*FileVersion:           "1.2"
 *LanguageVersion:       English
 *LanguageEncoding:      ISOLatin1
 *PCFileName:            "zj58.ppd"
@@ -26,8 +26,9 @@
 
 *OpenUI *PageSize/Media Size: PickOne
 *OrderDependency: 10 AnySetup *PageSize
-*DefaultPageSize: X48MMY210MM
+*DefaultPageSize: X48MMY105MM
 
+*PageSize X48MMY105MM/58mm x 105mm:         "<</PageSize[136 298]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 *PageSize X48MMY210MM/58mm x 210mm:         "<</PageSize[136 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 *PageSize X48MMY297MM/58mm x 297mm:         "<</PageSize[136 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 *PageSize X48MMY3276MM/58mm x 3276mm:       "<</PageSize[136 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
@@ -36,20 +37,23 @@
 
 *OpenUI *PageRegion: PickOne
 *OrderDependency: 10 AnySetup *PageRegion
-*DefaultPageRegion: X48mmY210mm
+*DefaultPageRegion: X48mmY105mm
 
+*PageRegion X48MMY105MM/58mm x 105mm:         "<</PageSize[164 298]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 *PageRegion X48MMY210MM/58mm x 210mm:         "<</PageSize[164 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 *PageRegion X48MMY297MM/58mm x 297mm:         "<</PageSize[164 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 *PageRegion X48MMY3276MM/58mm x 3276mm:       "<</PageSize[164 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 
-*DefaultImageableArea: X48MMY210MM
+*DefaultImageableArea: X48MMY105MM
 
+*ImageableArea X48MMY105MM:              "0 0 136 298"
 *ImageableArea X48MMY210MM:              "0 0 136 595"
 *ImageableArea X48MMY297MM:              "0 0 136 842"
 *ImageableArea X48MMY3276MM:             "0 0 136 9286"
 
-*DefaultPaperDimension: X48MMY210MM
+*DefaultPaperDimension: X48MMY105MM
 
+*PaperDimension X48MMY105MM:             "136 298"
 *PaperDimension X48MMY210MM:             "136 595"
 *PaperDimension X48MMY297MM:             "136 842"
 *PaperDimension X48MMY3276MM:            "136 9286"
