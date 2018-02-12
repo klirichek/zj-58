@@ -118,7 +118,7 @@ inline int getOptionChoiceIndex(const char * choiceName, ppd_file_t * ppd)
 }
 
 
-inline void initializeSettings(char * commandLineOptionSettings)
+void initializeSettings(char * commandLineOptionSettings)
 {
 	ppd_file_t *    ppd         = NULL;
 	cups_option_t * options     = NULL;
@@ -166,6 +166,10 @@ void ShutDown()
 }
 
 // sent at the end of every page
+#ifndef __sighandler_t
+typedef void (*__sighandler_t) (int);
+#endif
+
 __sighandler_t old_signal;
 void EndPage()
 {
