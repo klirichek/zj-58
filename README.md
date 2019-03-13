@@ -7,6 +7,8 @@ These drivers are also work with chinese XPrinters models XP-58 and XP-80 and I 
 Preamble
 --------
 
+This repository is based on https://github.com/klirichek/zj-58 which is (at least for now) not maintained.
+
 The linux driver provided on Zjiang site unfortunately doesn't work.
 * First, it is 32-bit binary (and so, on x64 system need some x86 libs to be installed).
 * Second, it's PPD is not correct - it just doesn't show any advanced settings because of it.
