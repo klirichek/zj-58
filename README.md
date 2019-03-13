@@ -2,7 +2,7 @@ ZJ-58 (and ZJ-80)
 =================
 
 CUPS filter for thermal printer Zjiang ZJ-58 and JZ-80 with cutter.
-These drivers are also work with chinese XPrinters models XP-58 and XP-80 and I think with almost any ESC/POS printers.
+These drivers are also work with chinese XPrinters models XP-58, XP-80, XP-N160II, etc. And I think it will work with almost any ESC/POS printers.
 
 Preamble
 --------
@@ -27,3 +27,15 @@ Installation
 1) Clone or download
 2) Run sudo ./install
 3) Go on installing printer with CUPS at http://localhost:631/
+
+Writing own PPD
+---------------
+
+You may write own PPD file for your printer to use any media size you want. Just open
+zj.drv file with any text editor and copy-paste printer section embraced with curly brackets.
+Then change your printer model and correct media sizes at the end of section.
+
+At most all chinese thermo printers has 203DPI resolution, so you need to recalculate media sizes
+into points, i.e. 229points=80mm, 164points=58mm, etc.
+
+Also you may change resolution value for your printer and recalculate all dimensions of your media.
