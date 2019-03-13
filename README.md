@@ -2,8 +2,9 @@ ZJ-58 (and ZJ-80)
 =================
 
 CUPS filter for thermal printer Zjiang ZJ-58 and JZ-80 with cutter.
+These drivers are also work with chinese XPrinters models XP-58 and XP-80 and I think with almost any ESC/POS printers.
 
-PREABMLE
+Preamble
 --------
 
 The linux driver provided on Zjiang site unfortunately doesn't work.
