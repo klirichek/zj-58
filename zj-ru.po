@@ -1,0 +1,131 @@
+msgid "Zijiang"
+msgstr "Zijiang"
+
+msgid "ZJ-58"
+msgstr "ZJ-58"
+
+msgid "ZJ-80"
+msgstr "ZJ-80"
+
+msgid "80mm x 105mm"
+msgstr "80x105мм"
+
+msgid "80mm x 210mm"
+msgstr "80x210мм"
+
+msgid "80mm x 297mm"
+msgstr "80x297мм"
+
+msgid "80mm x 3276mm"
+msgstr "80x3276мм"
+
+msgid "58mm x 105mm"
+msgstr "58x105мм"
+
+msgid "58mm x 210mm"
+msgstr "58x210мм"
+
+msgid "58mm x 297mm"
+msgstr "58x297мм"
+
+msgid "58mm x 3276mm"
+msgstr "58x3276мм"
+
+msgid "Cut Options"
+msgstr "Опции обрезки"
+
+msgid "Feed distance after print"
+msgstr "Прокрутка после печати"
+
+msgid "Feed 3mm"
+msgstr "На 3мм"
+
+msgid "Feed 6mm"
+msgstr "На 6мм"
+
+msgid "Feed 9mm"
+msgstr "На 9мм"
+
+msgid "Feed 12mm"
+msgstr "На 12мм"
+
+msgid "Feed 15mm"
+msgstr "На 15мм"
+
+msgid "Feed 18mm"
+msgstr "На 18мм"
+
+msgid "Feed 21mm"
+msgstr "На 21мм"
+
+msgid "Feed 24mm"
+msgstr "На 24мм"
+
+msgid "Feed 27mm"
+msgstr "На 27mm"
+
+msgid "Feed 30mm"
+msgstr "На 30mm"
+
+msgid "Feed 33mm"
+msgstr "На 33mm"
+
+msgid "Feed 36mm"
+msgstr "На 36mm"
+
+msgid "Feed 39mm"
+msgstr "На 39mm"
+
+msgid "Feed 42mm"
+msgstr "На 42mm"
+
+msgid "Feed 45mm"
+msgstr "На 45mm"
+
+msgid "Cutting"
+msgstr "Обрезка"
+
+msgid "No cutting"
+msgstr "Без обрезки"
+
+msgid "Cut at every page"
+msgstr "Обрезка по странице"
+
+msgid "Cut at every job"
+msgstr "Обрезка по документу"
+
+msgid "Blank space at end of page"
+msgstr "Пустое место в конце страницы"
+
+msgid "Print"
+msgstr "Печатать"
+
+msgid "Do not print"
+msgstr "Не печатать"
+
+msgid "Cash Drawer Control"
+msgstr "Денежный ящик"
+
+msgid "Cash Drawer 1"
+msgstr "Денежный ящик 1"
+
+msgid "No Cash Drawer 1"
+msgstr "Не открывать"
+
+msgid "Cash Drawer 1 Before Printing"
+msgstr "Открывать перед печатью"
+
+msgid "Cash Drawer 1 After Printing"
+msgstr "Открывать после печати"
+
+msgid "Cash Drawer 2"
+msgstr "Денежный ящик 2"
+
+msgid "No Cash Drawer 2"
+msgstr "Не открывать"
+
+msgid "Cash Drawer 2 Before Printing"
+msgstr "Открывать перед печатью"
+
+msgid "Cash Drawer 2 After Printing"
+msgstr "Открывать после печати"

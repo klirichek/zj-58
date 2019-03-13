@@ -25,7 +25,7 @@
 *cupsModelNumber: 80
 *cupsManualCopies: True
 *cupsFilter: "application/vnd.cups-raster 0 rastertozj"
-*cupsLanguages: "en"
+*cupsLanguages: "en ru"
 *OpenUI *PageSize/Media Size: PickOne
 *OrderDependency: 10 AnySetup *PageSize
 *DefaultPageSize: X70MMY105MM
@@ -102,5 +102,47 @@
 *CashDrawer2Setting 2NotCashDrawer2BeforePrinting/Cash Drawer 2 After Printing: ""
 *CloseUI: *CashDrawer2Setting
 *CloseGroup: *CashDrawerGroup
+*ru.Translation Manufacturer/Zijiang: ""
+*ru.Translation ModelName/Zijiang ZJ-80: ""
+*ru.Translation ShortNickName/ZJ-80: ""
+*ru.Translation NickName/Zijiang ZJ-80: ""
+*ru.Translation PageSize/Размер бумаги: ""
+*ru.PageSize X70MMY105MM/80x105мм: ""
+*ru.PageSize X70MMY210MM/80x210мм: ""
+*ru.PageSize X70MMY297MM/80x297мм: ""
+*ru.PageSize X70MMY3276MM/80x3276мм: ""
+*ru.Translation CutGroup/Опции обрезки: ""
+*ru.Translation FeedDist/Прокрутка после печати: ""
+*ru.FeedDist 0feed3mm/На 3мм: ""
+*ru.FeedDist 1feed6mm/На 6мм: ""
+*ru.FeedDist 2feed9mm/На 9мм: ""
+*ru.FeedDist 3feed12mm/На 12мм: ""
+*ru.FeedDist 4feed15mm/На 15мм: ""
+*ru.FeedDist 5feed18mm/На 18мм: ""
+*ru.FeedDist 6feed21mm/На 21мм: ""
+*ru.FeedDist 7feed24mm/На 24мм: ""
+*ru.FeedDist 8feed27mm/На 27mm: ""
+*ru.FeedDist 9feed30mm/На 30mm: ""
+*ru.FeedDist 10feed33mm/На 33mm: ""
+*ru.FeedDist 11feed36mm/На 36mm: ""
+*ru.FeedDist 12feed39mm/На 39mm: ""
+*ru.FeedDist 13feed42mm/На 42mm: ""
+*ru.FeedDist 14feed45mm/На 45mm: ""
+*ru.Translation Cutting/Обрезка: ""
+*ru.Cutting 0NoCutting/Без обрезки: ""
+*ru.Cutting 1CutAtTheEndOfPage/Обрезка по странице: ""
+*ru.Cutting 2CutAtTheEndOfJob/Обрезка по документу: ""
+*ru.Translation BlankSpace/Пустое место в конце страницы: ""
+*ru.BlankSpace 0Print/Печатать: ""
+*ru.BlankSpace 1NoPrint/Не печатать: ""
+*ru.Translation *CashDrawerGroup/Денежный ящик: ""
+*ru.Translation CashDrawer1Setting/Денежный ящик 1: ""
+*ru.CashDrawer1Setting 0NotCashDrawer1/Не открывать: ""
+*ru.CashDrawer1Setting 1NotCashDrawer1BeforePrinting/Открывать перед печатью: ""
+*ru.CashDrawer1Setting 2NotCashDrawer1BeforePrinting/Открывать после печати: ""
+*ru.Translation CashDrawer2Setting/Денежный ящик 2: ""
+*ru.CashDrawer2Setting 0NotCashDrawer2/Не открывать: ""
+*ru.CashDrawer2Setting 1NotCashDrawer2BeforePrinting/Открывать перед печатью: ""
+*ru.CashDrawer2Setting 2NotCashDrawer2BeforePrinting/Открывать после печати: ""
 *DefaultFont: Courier
-*% End of zj80.ppd, 04564 bytes.
+*% End of zj80.ppd, 06800 bytes.
