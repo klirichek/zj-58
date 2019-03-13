@@ -4,7 +4,7 @@ ZJ-58 (and ZJ-80)
 CUPS filter for thermal printer Zjiang ZJ-58 and JZ-80 with cutter.
 
 PREABMLE
-========
+--------
 
 The linux driver provided on Zjiang site unfortunately doesn't work.
 * First, it is 32-bit binary (and so, on x64 system need some x86 libs to be installed).
@@ -19,7 +19,7 @@ Filter is provided as src (you can found a list of packages need to be installed
 Also, printing of blank lines is optimized.
 
 Installation
-============
+------------
 
 1) Clone or download
 2) Run sudo ./install
