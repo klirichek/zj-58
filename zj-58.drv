@@ -46,6 +46,10 @@
     Option "BlankSpace/Blank space at page's end" PickOne AnySetup 0,0
       Choice "0Print/Print" ""
       *Choice "1NoPrint/Do not print" ""
+    Option "Cutting/Cutting" PickOne AnySetup 0,0
+      Choice "0NoCutting/No cutting" ""
+      *Choice "1CutAtTheEndOfPage/Cut at every page" ""
+      Choice "2CutAtTheEndOfJob/Cut at every job" ""
   Group "*CashDrawerGroup/Cash Drawer Control"
     Option "CashDrawer1Setting/Cash Drawer 1" PickOne AnySetup 0,0
       *Choice "0NotCashDrawer1/Not Cash Drawer 1" ""

@@ -1,0 +1,106 @@
+*PPD-Adobe: "4.3"
+*%%%% PPD file for ZJ-80 with CUPS.
+*%%%% Created by the CUPS PPD Compiler CUPS v2.2.1.
+*FormatVersion: "4.3"
+*FileVersion: "1.1"
+*LanguageVersion: English
+*LanguageEncoding: ISOLatin1
+*PCFileName: "zj80.ppd"
+*Product: "(zj-80)"
+*Manufacturer: "Zijiang"
+*ModelName: "Zijiang ZJ-80"
+*ShortNickName: "ZJ-80"
+*NickName: "Zijiang ZJ-80"
+*PSVersion: "(3010.000) 550"
+*LanguageLevel: "3"
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*FileSystem: False
+*Throughput: "1"
+*LandscapeOrientation: Plus90
+*TTRasterizer: Type42
+*% Driver-defined attributes...
+*1284DeviceID: "MFG:Zijiang;CMD:Zijiang;MDL:ZJ-80;CLS:PRINTER;"
+*cupsVersion: 2.2
+*cupsModelNumber: 80
+*cupsManualCopies: True
+*cupsFilter: "application/vnd.cups-raster 0 rastertozj"
+*cupsLanguages: "en"
+*OpenUI *PageSize/Media Size: PickOne
+*OrderDependency: 10 AnySetup *PageSize
+*DefaultPageSize: X70MMY105MM
+*PageSize X70MMY105MM/80mm x 105mm: "<</PageSize[198 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageSize X70MMY210MM/80mm x 210mm: "<</PageSize[198 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageSize X70MMY297MM/80mm x 297mm: "<</PageSize[198 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageSize X70MMY3276MM/80mm x 3276mm: "<</PageSize[198 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*CloseUI: *PageSize
+*OpenUI *PageRegion/Media Size: PickOne
+*OrderDependency: 10 AnySetup *PageRegion
+*DefaultPageRegion: X70MMY105MM
+*PageRegion X70MMY105MM/80mm x 105mm: "<</PageSize[226 298]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageRegion X70MMY210MM/80mm x 210mm: "<</PageSize[226 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageRegion X70MMY297MM/80mm x 297mm: "<</PageSize[226 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageRegion X70MMY3276MM/80mm x 3276mm: "<</PageSize[226 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*CloseUI: *PageRegion
+*DefaultImageableArea: X70MMY105MM
+*ImageableArea X70MMY105MM/80mm x 105mm: "0 0 198 298"
+*ImageableArea X70MMY210MM/80mm x 210mm: "0 0 198 595"
+*ImageableArea X70MMY297MM/80mm x 297mm: "0 0 198 842"
+*ImageableArea X70MMY3276MM/80mm x 3276mm: "0 0 198 9286"
+*DefaultPaperDimension: X70MMY105MM
+*PaperDimension X70MMY105MM/80mm x 105mm: "198 298"
+*PaperDimension X70MMY210MM/80mm x 210mm: "198 595"
+*PaperDimension X70MMY297MM/80mm x 297mm: "198 842"
+*PaperDimension X70MMY3276MM/80mm x 3276mm: "198 9286"
+*OpenGroup: CutGroup/Cut Options
+*OpenUI *FeedDist/Feed distance after print: PickOne
+*OrderDependency: 0 AnySetup *FeedDist
+*DefaultFeedDist: 2feed9mm
+*FeedDist 0feed3mm/Feed 3mm: ""
+*FeedDist 1feed6mm/Feed 6mm: ""
+*FeedDist 2feed9mm/Feed 9mm: ""
+*FeedDist 3feed12mm/Feed 12mm: ""
+*FeedDist 4feed15mm/Feed 15mm: ""
+*FeedDist 5feed18mm/Feed 18mm: ""
+*FeedDist 6feed21mm/Feed 21mm: ""
+*FeedDist 7feed24mm/Feed 24mm: ""
+*FeedDist 8feed27mm/Feed 27mm: ""
+*FeedDist 9feed30mm/Feed 30mm: ""
+*FeedDist 10feed33mm/Feed 33mm: ""
+*FeedDist 11feed36mm/Feed 36mm: ""
+*FeedDist 12feed39mm/Feed 39mm: ""
+*FeedDist 13feed42mm/Feed 42mm: ""
+*FeedDist 14feed45mm/Feed 45mm: ""
+*CloseUI: *FeedDist
+*OpenUI *Cutting/Cutting: PickOne
+*OrderDependency: 0 AnySetup *Cutting
+*DefaultCutting: 1CutAtTheEndOfPage
+*Cutting 0NoCutting/No cutting: ""
+*Cutting 1CutAtTheEndOfPage/Cut at every page: ""
+*Cutting 2CutAtTheEndOfJob/Cut at every job: ""
+*CloseUI: *Cutting
+*OpenUI *BlankSpace/Blank space at end of page: PickOne
+*OrderDependency: 0 AnySetup *BlankSpace
+*DefaultBlankSpace: 1NoPrint
+*BlankSpace 0Print/Print: ""
+*BlankSpace 1NoPrint/Do not print: ""
+*CloseUI: *BlankSpace
+*CloseGroup: CutGroup
+*OpenGroup: *CashDrawerGroup/Cash Drawer Control
+*OpenUI *CashDrawer1Setting/Cash Drawer 1: PickOne
+*OrderDependency: 0 AnySetup *CashDrawer1Setting
+*DefaultCashDrawer1Setting: 0NotCashDrawer1
+*CashDrawer1Setting 0NotCashDrawer1/No Cash Drawer 1: ""
+*CashDrawer1Setting 1NotCashDrawer1BeforePrinting/Cash Drawer 1 Before Printing: ""
+*CashDrawer1Setting 2NotCashDrawer1BeforePrinting/Cash Drawer 1 After Printing: ""
+*CloseUI: *CashDrawer1Setting
+*OpenUI *CashDrawer2Setting/Cash Drawer 2: PickOne
+*OrderDependency: 0 AnySetup *CashDrawer2Setting
+*DefaultCashDrawer2Setting: 0NotCashDrawer2
+*CashDrawer2Setting 0NotCashDrawer2/No Cash Drawer 2: ""
+*CashDrawer2Setting 1NotCashDrawer2BeforePrinting/Cash Drawer 2 Before Printing: ""
+*CashDrawer2Setting 2NotCashDrawer2BeforePrinting/Cash Drawer 2 After Printing: ""
+*CloseUI: *CashDrawer2Setting
+*CloseGroup: *CashDrawerGroup
+*DefaultFont: Courier
+*% End of zj80.ppd, 04564 bytes.

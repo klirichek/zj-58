@@ -1,7 +1,7 @@
-zj-58
-=====
+zj-58 (and zj-80)
+=================
 
-CUPS filter for thermal printer Zjiang ZJ-58
+CUPS filter for thermal printer Zjiang ZJ-58 and JZ-80
 
 The linux driver provided on Zjiang site unfortunately doesn't work.
 First, it is 32-bit binary (and so, on x64 system need some x86 libs to be installed).

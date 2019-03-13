@@ -1,0 +1,102 @@
+*PPD-Adobe: "4.3"
+*%%%% PPD file for ZJ-58 with CUPS.
+*%%%% Created by the CUPS PPD Compiler CUPS v2.2.1.
+*FormatVersion: "4.3"
+*FileVersion: "1.1"
+*LanguageVersion: English
+*LanguageEncoding: ISOLatin1
+*PCFileName: "zj58.ppd"
+*Product: "(zj-58)"
+*Manufacturer: "Zijiang"
+*ModelName: "Zijiang ZJ-58"
+*ShortNickName: "ZJ-58"
+*NickName: "Zijiang ZJ-58"
+*PSVersion: "(3010.000) 550"
+*LanguageLevel: "3"
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*FileSystem: False
+*Throughput: "1"
+*LandscapeOrientation: Plus90
+*TTRasterizer: Type42
+*% Driver-defined attributes...
+*1284DeviceID: "MFG:Zijiang;CMD:Zijiang;MDL:ZJ-58;CLS:PRINTER;"
+*cupsVersion: 2.2
+*cupsModelNumber: 58
+*cupsManualCopies: True
+*cupsFilter: "application/vnd.cups-raster 0 rastertozj"
+*cupsLanguages: "en"
+*OpenUI *PageSize/Media Size: PickOne
+*OrderDependency: 10 AnySetup *PageSize
+*DefaultPageSize: X48MMY210MM
+*PageSize X48MMY210MM/58mm x 210mm: "<</PageSize[136 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageSize X48MMY297MM/58mm x 297mm: "<</PageSize[136 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageSize X48MMY3276MM/58mm x 3276mm: "<</PageSize[136 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*CloseUI: *PageSize
+*OpenUI *PageRegion/Media Size: PickOne
+*OrderDependency: 10 AnySetup *PageRegion
+*DefaultPageRegion: X48MMY210MM
+*PageRegion X48MMY210MM/58mm x 210mm: "<</PageSize[164 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageRegion X48MMY297MM/58mm x 297mm: "<</PageSize[164 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*PageRegion X48MMY3276MM/58mm x 3276mm: "<</PageSize[164 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+*CloseUI: *PageRegion
+*DefaultImageableArea: X48MMY210MM
+*ImageableArea X48MMY210MM/58mm x 210mm: "0 0 136 595"
+*ImageableArea X48MMY297MM/58mm x 297mm: "0 0 136 842"
+*ImageableArea X48MMY3276MM/58mm x 3276mm: "0 0 136 9286"
+*DefaultPaperDimension: X48MMY210MM
+*PaperDimension X48MMY210MM/58mm x 210mm: "136 595"
+*PaperDimension X48MMY297MM/58mm x 297mm: "136 842"
+*PaperDimension X48MMY3276MM/58mm x 3276mm: "136 9286"
+*OpenGroup: CutGroup/Cut Options
+*OpenUI *FeedDist/Feed distance after print: PickOne
+*OrderDependency: 0 AnySetup *FeedDist
+*DefaultFeedDist: 2feed9mm
+*FeedDist 0feed3mm/feed 3mm: ""
+*FeedDist 1feed6mm/feed 6mm: ""
+*FeedDist 2feed9mm/feed 9mm: ""
+*FeedDist 3feed12mm/feed 12mm: ""
+*FeedDist 4feed15mm/feed 15mm: ""
+*FeedDist 5feed18mm/feed 18mm: ""
+*FeedDist 6feed21mm/feed 21mm: ""
+*FeedDist 7feed24mm/feed 24mm: ""
+*FeedDist 8feed27mm/feed 27mm: ""
+*FeedDist 9feed30mm/feed 30mm: ""
+*FeedDist 10feed33mm/feed 33mm: ""
+*FeedDist 11feed36mm/feed 36mm: ""
+*FeedDist 12feed39mm/feed 39mm: ""
+*FeedDist 13feed42mm/feed 42mm: ""
+*FeedDist 14feed45mm/feed 45mm: ""
+*CloseUI: *FeedDist
+*OpenUI *BlankSpace/Blank space at page's end: PickOne
+*OrderDependency: 0 AnySetup *BlankSpace
+*DefaultBlankSpace: 1NoPrint
+*BlankSpace 0Print/Print: ""
+*BlankSpace 1NoPrint/Do not print: ""
+*CloseUI: *BlankSpace
+*OpenUI *Cutting/Cutting: PickOne
+*OrderDependency: 0 AnySetup *Cutting
+*DefaultCutting: 1CutAtTheEndOfPage
+*Cutting 0NoCutting/No cutting: ""
+*Cutting 1CutAtTheEndOfPage/Cut at every page: ""
+*Cutting 2CutAtTheEndOfJob/Cut at every job: ""
+*CloseUI: *Cutting
+*CloseGroup: CutGroup
+*OpenGroup: *CashDrawerGroup/Cash Drawer Control
+*OpenUI *CashDrawer1Setting/Cash Drawer 1: PickOne
+*OrderDependency: 0 AnySetup *CashDrawer1Setting
+*DefaultCashDrawer1Setting: 0NotCashDrawer1
+*CashDrawer1Setting 0NotCashDrawer1/Not Cash Drawer 1: ""
+*CashDrawer1Setting 1NotCashDrawer1BeforePrinting/Cash Drawer 1 Before Printing: ""
+*CashDrawer1Setting 2NotCashDrawer1BeforePrinting/Cash Drawer 1 After Printing: ""
+*CloseUI: *CashDrawer1Setting
+*OpenUI *CashDrawer2Setting/Cash Drawer 2: PickOne
+*OrderDependency: 0 AnySetup *CashDrawer2Setting
+*DefaultCashDrawer2Setting: 0NotCashDrawer2
+*CashDrawer2Setting 0NotCashDrawer2/Not Cash Drawer 2: ""
+*CashDrawer2Setting 1NotCashDrawer2BeforePrinting/Cash Drawer 2 Before Printing: ""
+*CashDrawer2Setting 2NotCashDrawer2BeforePrinting/Cash Drawer 2 After Printing: ""
+*CloseUI: *CashDrawer2Setting
+*CloseGroup: *CashDrawerGroup
+*DefaultFont: Courier
+*% End of zj58.ppd, 04230 bytes.

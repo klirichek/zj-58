@@ -20,6 +20,7 @@ struct settings_
 	int cashDrawer2;
 	int blankSpace;
 	int feedDist;
+	int cutting;
 };
 struct settings_ settings;
 
@@ -42,12 +43,16 @@ static const struct command cashDrawerEject [2] =
 static const struct command rasterModeStartCommand =
 {4,(char[4]){0x1d,0x76,0x30,0}};
 
+// cut command <esc>+i
+static const struct command cutCommand = 
+{2,(char[2]){0x1b,0x69}};
+
 #ifdef DEBUGP
 FILE* lfd = 0;
 #endif
 
 // putchar with debug wrapper
-inline void mputchar(char c)
+static inline void mputchar(char c)
 {
 	unsigned char m = c;
 #ifdef DEBUGP
@@ -58,7 +63,7 @@ inline void mputchar(char c)
 }
 
 // procedure to output an array
-inline void outputarray(const char * array, int length)
+static inline void outputarray(const char * array, int length)
 {
 	int i = 0;
 	for (;i<length;++i)
@@ -66,23 +71,23 @@ inline void outputarray(const char * array, int length)
 }
 
 // output a command
-inline void outputCommand(struct command output)
+static inline void outputCommand(struct command output)
 {
 	outputarray(output.command,output.length);
 }
 
-inline int lo(int val)
+static inline int lo(int val)
 {
 	return val & 0xFF;
 }
 
-inline int hi (int val)
+static inline int hi (int val)
 {
 	return lo (val>>8);
 }
 
 // enter raster mode and set up x and y dimensions
-inline void rasterheader(int xsize, int ysize)
+static inline void rasterheader(int xsize, int ysize)
 {
 	outputCommand(rasterModeStartCommand);
 	mputchar(lo(xsize));
@@ -93,7 +98,7 @@ inline void rasterheader(int xsize, int ysize)
 
 // print all unprinted (i.e. flush the buffer)
 // then feed given number of lines
-inline void skiplines(int size)
+static inline void skiplines(int size)
 {
 	mputchar(0x1b);
 	mputchar(0x4a);
@@ -101,7 +106,7 @@ inline void skiplines(int size)
 }
 
 // get an option
-inline int getOptionChoiceIndex(const char * choiceName, ppd_file_t * ppd)
+static inline int getOptionChoiceIndex(const char * choiceName, ppd_file_t * ppd)
 {
 	ppd_choice_t * choice;
 	ppd_option_t * option;
@@ -141,6 +146,7 @@ void initializeSettings(char * commandLineOptionSettings)
 	settings.cashDrawer2  = getOptionChoiceIndex("CashDrawer2Setting", ppd);
 	settings.blankSpace   = getOptionChoiceIndex("BlankSpace"        , ppd);
 	settings.feedDist     = getOptionChoiceIndex("FeedDist"          , ppd);
+	settings.cutting      = getOptionChoiceIndex("Cutting"           , ppd);
 
 	ppdClose(ppd);
 }
@@ -158,6 +164,11 @@ void jobSetup()
 // sent at the very end of print job
 void ShutDown()
 {
+	// Cut on end of a job
+	if (settings.cutting == 2) {
+		outputCommand(cutCommand);
+	}
+
 	if ( settings.cashDrawer1==2 )
 		outputCommand(cashDrawerEject[0]);
 	if ( settings.cashDrawer2==2 )
@@ -177,6 +188,11 @@ void EndPage()
 	for (i=0; i<settings.feedDist; ++i)
 		skiplines(0x18);
 	signal(15,old_signal);
+
+	// Cut on every page
+	if (settings.cutting == 1) {
+		outputCommand(cutCommand);
+	}
 }
 
 // sent on job canceling
