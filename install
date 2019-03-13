@@ -1,13 +1,15 @@
 #!/bin/bash
 
-# Installs zj-58 driver
-# Tested as working under Ubuntu 14.04
+echo "Compiling..."
+make
 
+echo "Stopping CUPS"
 /etc/init.d/cups stop
 
-# Compile drivers
+echo "Compile drivers"
 ppdc *.drv
 
+echo "Copying files"
 cp rastertozj /usr/lib/cups/filter/
 mkdir -p /usr/share/cups/model/zjiang
 cp ppd/zj58.ppd /usr/share/cups/model/zjiang/
@@ -17,4 +19,5 @@ chmod 755 rastertozj
 chown root:root rastertozj
 cd -
 
+echo "Starting CUPS"
 /etc/init.d/cups start
