@@ -4,11 +4,17 @@
 # Tested as working under Ubuntu 14.04
 
 /etc/init.d/cups stop
+
+# Compile drivers
+ppdc *.drv
+
 cp rastertozj /usr/lib/cups/filter/
 mkdir -p /usr/share/cups/model/zjiang
-cp ZJ-58.ppd /usr/share/cups/model/zjiang/
+cp ppd/zj58.ppd /usr/share/cups/model/zjiang/
+cp ppd/zj80.ppd /usr/share/cups/model/zjiang/
 cd /usr/lib/cups/filter
 chmod 755 rastertozj
 chown root:root rastertozj
 cd -
+
 /etc/init.d/cups start
