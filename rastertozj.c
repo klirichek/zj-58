@@ -226,7 +226,7 @@ int main(int argc, char *argv[])
 		fd = 0;
 
 #ifdef DEBUGP
-	lfd = fopen ("/tmp/raster.txt","w");
+	lfd = fopen (DEBUGFILE, "w");
 #endif
 
 	initializeSettings(argv[5]);
