@@ -7,12 +7,9 @@
 #include <signal.h>
 #include <stdlib.h>
 
-// uncomment next line in order to have verbose dump in DEBUGFILE
-// after print
-
-//#define DEBUGP
-
+#ifndef DEBUGFILE
 #define DEBUGFILE "/tmp/debugraster.txt"
+#endif
 
 struct settings_ {
   int cashDrawer1;
@@ -40,38 +37,40 @@ static const struct command cashDrawerEject[2] = {
 static const struct command rasterModeStartCommand = {
     4, (char[4]){0x1d, 0x76, 0x30, 0}};
 
-#ifdef DEBUGP
-FILE *lfd = 0;
-#endif
+#ifndef DEBUGP
 
+static inline void mputchar(char c) { putchar(c); }
+
+#else
+
+FILE *lfd = 0;
 // putchar with debug wrapper
-inline void mputchar(char c) {
+static inline void mputchar(char c) {
   unsigned char m = c;
-#ifdef DEBUGP
   if (lfd)
     fprintf(lfd, "%02x ", m);
-#endif
   putchar(m);
 }
+#endif
 
 // procedure to output an array
-inline void outputarray(const char *array, int length) {
+static inline void outputarray(const char *array, int length) {
   int i = 0;
   for (; i < length; ++i)
     mputchar(array[i]);
 }
 
 // output a command
-inline void outputCommand(struct command output) {
+static inline void outputCommand(struct command output) {
   outputarray(output.command, output.length);
 }
 
-inline int lo(int val) { return val & 0xFF; }
+static inline int lo(int val) { return val & 0xFF; }
 
-inline int hi(int val) { return lo(val >> 8); }
+static inline int hi(int val) { return lo(val >> 8); }
 
 // enter raster mode and set up x and y dimensions
-inline void rasterheader(int xsize, int ysize) {
+static inline void rasterheader(int xsize, int ysize) {
   outputCommand(rasterModeStartCommand);
   mputchar(lo(xsize));
   mputchar(hi(xsize));
@@ -81,14 +80,15 @@ inline void rasterheader(int xsize, int ysize) {
 
 // print all unprinted (i.e. flush the buffer)
 // then feed given number of lines
-inline void skiplines(int size) {
+static inline void skiplines(int size) {
   mputchar(0x1b);
   mputchar(0x4a);
   mputchar(size);
 }
 
 // get an option
-inline int getOptionChoiceIndex(const char *choiceName, ppd_file_t *ppd) {
+static inline int getOptionChoiceIndex(const char *choiceName,
+                                       ppd_file_t *ppd) {
   ppd_choice_t *choice;
   ppd_option_t *option;
 
@@ -104,7 +104,7 @@ inline int getOptionChoiceIndex(const char *choiceName, ppd_file_t *ppd) {
   return atoi(choice->choice);
 }
 
-void initializeSettings(char *commandLineOptionSettings) {
+static void initializeSettings(char *commandLineOptionSettings) {
   ppd_file_t *ppd = NULL;
   cups_option_t *options = NULL;
   int numOptions = 0;
@@ -161,7 +161,7 @@ void EndPage() {
 }
 
 // sent on job canceling
-void cancelJob(int foo) {
+void cancelJob() {
   int i = 0;
   for (; i < 0x258; ++i)
     mputchar(0);
@@ -273,7 +273,7 @@ int main(int argc, char *argv[]) {
         }
 #ifdef DEBUGP
         if (lfd)
-          fprintf(lfd, "\nReaded %d lines\n", j);
+          fprintf(lfd, "\nRead %d lines\n", j);
 #endif
         if (j < rest)
           continue;
@@ -311,23 +311,20 @@ int main(int argc, char *argv[]) {
 
   ShutDown();
 
-  if (originalRasterDataPtr != NULL)
+  if (originalRasterDataPtr)
     free(originalRasterDataPtr);
   cupsRasterClose(ras);
-  if (fd != 0)
+  if (fd)
     close(fd);
 
-  if (page == 0)
-    fputs("ERROR: No pages found!\n", stderr);
-  else
-    fputs("INFO: Ready to print.\n", stderr);
+  fputs(page ? "INFO: Ready to print.\n" : "ERROR: No pages found!\n", stderr);
 
 #ifdef DEBUGP
   if (lfd)
     fclose(lfd);
 #endif
 
-  return (page == 0) ? EXIT_FAILURE : EXIT_SUCCESS;
+  return page ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 // end of rastertozj.c
