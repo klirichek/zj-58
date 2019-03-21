@@ -24,18 +24,28 @@ struct command {
   char *command;
 };
 
+/*
+ * zj uses kind of epson ESC/P dialect code. Here is subset of commands
+ *
+ * initialize - esc @
+ * cash drawer 1 - esc p 0 @ P
+ * cash drawer 2 - esc p 1 @ P
+ * start raster - esc v 0
+ * skip lines - esc j
+ * cut - esc i
+ */
 // define printer initialize command
 static const struct command printerInitializeCommand = {2,
-                                                        (char[2]){0x1b, 0x40}};
+                                                        (char[2]){0x1b, 0x40}}; // esc @
 
 // define cashDrawerEjector command
 static const struct command cashDrawerEject[2] = {
-    {5, (char[5]){0x1b, 0x70, 0, 0x40, 0x50}},
+    {5, (char[5]){0x1b, 0x70, 0, 0x40, 0x50}}, // esc p N @ P
     {5, (char[5]){0x1b, 0x70, 1, 0x40, 0x50}}};
 
 // define raster mode start command
 static const struct command rasterModeStartCommand = {
-    4, (char[4]){0x1d, 0x76, 0x30, 0}};
+    4, (char[4]){0x1d, 0x76, 0x30, 0}}; // esc v 0
 
 #ifndef DEBUGP
 
@@ -82,7 +92,7 @@ static inline void rasterheader(int xsize, int ysize) {
 // then feed given number of lines
 static inline void skiplines(int size) {
   mputchar(0x1b);
-  mputchar(0x4a);
+  mputchar(0x4a); // esc j
   mputchar(size);
 }
 
