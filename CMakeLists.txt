@@ -1,4 +1,4 @@
-cmake_minimum_required ( VERSION 3.12 )
+cmake_minimum_required ( VERSION 3.0 )
 
 # set default build type to Release (if nothing else provided from outside yet)
 IF ( NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES )
@@ -9,19 +9,17 @@ ENDIF ()
 
 project ( rastertozj C )
 
-#set ( CMAKE_INSTALL_PREFIX "/usr" CACHE FILEPATH "force install to /usr" FORCE )
-
 function( DIAG VARR )
 	message ( STATUS "${VARR} -> ${${VARR}}" )
 endfunction()
 
-# build the filter binary
+# requirements to build the filter binary
 find_package ( Cups REQUIRED )
 find_library ( CUPSIMAGELIB NAMES cupsimage )
 mark_as_advanced ( CUPSIMAGELIB )
 
 set ( DEBUGFILE "/tmp/debugraster.txt" CACHE STRING "File where to make debug output if DEBUGP is set" )
-option ( DEBUGP "Whetner to output debug info" ON )
+option ( DEBUGP "Whetner to output debug info" OFF )
 
 add_executable ( rastertozj rastertozj.c )
 target_compile_options ( rastertozj PRIVATE -Wall -fPIC )
@@ -43,8 +41,6 @@ if ( PPDC )
 	execute_process (
 			COMMAND "${PPDC}" -d "${CMAKE_CURRENT_BINARY_DIR}" "zj-58.drv"
 			WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-			RESULT_VARIABLE res
-			OUTPUT_VARIABLE _CONTENT
 			ERROR_QUIET
 			OUTPUT_STRIP_TRAILING_WHITESPACE )
 endif()
@@ -52,13 +48,10 @@ endif()
 # installation stuff
 
 # this one works if you perform 'make install'
-set ( CMAKE_INSTALL_PREFIX "/usr" CACHE FILEPATH "this is forced to /usr" FORCE )
+set ( CMAKE_INSTALL_PREFIX "/" CACHE FILEPATH "this is forced to /" FORCE )
 
 # this one works if you perform 'make package' - it is kind of root for all packaging
 set ( CPACK_PACKAGING_INSTALL_PREFIX "/" )
-
-
-include ( GNUInstallDirs )
 
 if ( APPLE )
 	set ( FILTERPATH "usr/libexec/cups/filter" )
@@ -69,6 +62,11 @@ elseif ( UNIX )
 endif()
 
 install ( TARGETS rastertozj DESTINATION ${FILTERPATH} )
+# this line sets correct target permissions, due to CUPS requirements
+# However as a side effect you'll need either fakeroot, either sudo to even perform 'make package' because of it.
+install ( CODE "EXECUTE_PROCESS(COMMAND chown root:wheel \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${FILTERPATH}/rastertozj\")" )
+
 install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/zj58.ppd DESTINATION "${PPDPATH}" )
+
 include (CPack)
 

@@ -11,6 +11,7 @@
 #define DEBUGFILE "/tmp/debugraster.txt"
 #endif
 
+// settings and their stuff
 struct settings_ {
   int cashDrawer1;
   int cashDrawer2;
@@ -19,40 +20,44 @@ struct settings_ {
 };
 struct settings_ settings;
 
-struct command {
-  int length;
-  char *command;
-};
+// get an option
+static inline int getOptionChoiceIndex(const char *sChoiceName,
+                                       ppd_file_t *pPpd) {
+  ppd_choice_t *pChoice = ppdFindMarkedChoice(pPpd, sChoiceName);
+  if (!pChoice) {
+    ppd_option_t *pOption = ppdFindOption(pPpd, sChoiceName);
+    if (pOption)
+      pChoice = ppdFindChoice(pOption, pOption->defchoice);
+  }
+  return pChoice ? atoi(pChoice->choice) : -1;
+}
 
-/*
- * zj uses kind of epson ESC/P dialect code. Here is subset of commands
- *
- * initialize - esc @
- * cash drawer 1 - esc p 0 @ P
- * cash drawer 2 - esc p 1 @ P
- * start raster - esc v 0
- * skip lines - esc j
- * cut - esc i
- */
-// define printer initialize command
-static const struct command printerInitializeCommand = {2,
-                                                        (char[2]){0x1b, 0x40}}; // esc @
+static void initializeSettings(char *commandLineOptionSettings, struct settings_ *pSettings) {
+  ppd_file_t *pPpd = ppdOpenFile(getenv("PPD"));
+  ppdMarkDefaults(pPpd);
 
-// define cashDrawerEjector command
-static const struct command cashDrawerEject[2] = {
-    {5, (char[5]){0x1b, 0x70, 0, 0x40, 0x50}}, // esc p N @ P
-    {5, (char[5]){0x1b, 0x70, 1, 0x40, 0x50}}};
+  cups_option_t *pOptions = NULL;
+  int iNumOptions = cupsParseOptions(commandLineOptionSettings, 0, &pOptions);
+  if (iNumOptions && pOptions) {
+    cupsMarkOptions(pPpd, iNumOptions, pOptions);
+    cupsFreeOptions(iNumOptions, pOptions);
+  }
 
-// define raster mode start command
-static const struct command rasterModeStartCommand = {
-    4, (char[4]){0x1d, 0x76, 0x30, 0}}; // esc v 0
+  memset(pSettings, 0, sizeof(struct settings_));
+  pSettings->cashDrawer1 = getOptionChoiceIndex("CashDrawer1Setting", pPpd);
+  pSettings->cashDrawer2 = getOptionChoiceIndex("CashDrawer2Setting", pPpd);
+  pSettings->blankSpace = getOptionChoiceIndex("BlankSpace", pPpd);
+  pSettings->feedDist = getOptionChoiceIndex("FeedDist", pPpd);
+
+  ppdClose(pPpd);
+}
 
 #ifndef DEBUGP
-
 static inline void mputchar(char c) { putchar(c); }
-
+#define DEBUGSTARTPRINT()
+#define DEBUGFINISHPRINT()
+#define DEBUGPRINT(...)
 #else
-
 FILE *lfd = 0;
 // putchar with debug wrapper
 static inline void mputchar(char c) {
@@ -61,6 +66,11 @@ static inline void mputchar(char c) {
     fprintf(lfd, "%02x ", m);
   putchar(m);
 }
+#define DEBUGSTARTPRINT() lfd = fopen(DEBUGFILE, "w")
+#define DEBUGFINISHPRINT()                                                     \
+  if (lfd)                                                                     \
+  fclose(lfd)
+#define DEBUGPRINT(...) if (lfd) fprintf(lfd, "\n" __VA_ARGS__)
 #endif
 
 // procedure to output an array
@@ -70,91 +80,86 @@ static inline void outputarray(const char *array, int length) {
     mputchar(array[i]);
 }
 
-// output a command
-static inline void outputCommand(struct command output) {
-  outputarray(output.command, output.length);
+// output a command. -1 is because we determine them as string literals,
+// so \0 implicitly added at the end, but we don't need it at all
+#define SendCommand(COMMAND) outputarray((COMMAND),sizeof((COMMAND))-1)
+
+static inline void mputnum(unsigned int val) {
+  mputchar(val&0xFFU);
+  mputchar((val>>8)&0xFFU);
 }
 
-static inline int lo(int val) { return val & 0xFF; }
+/*
+ * zj uses kind of epson ESC/POS dialect code. Here is subset of commands
+ *
+ * initialize - esc @
+ * cash drawer 1 - esc p 0 @ P
+ * cash drawer 2 - esc p 1 @ P  // @ and P <N> and <M>
+ *    where <N>*2ms is pulse on time, <M>*2ms is pulse off.
+ * start raster - GS v 0 // 0 is full-density, may be also 1, 2, 4
+ * skip lines - esc J // then N [0..255], each value 1/44 inches (0.176mm)
+ * // another commands out-of-spec:
+ * esc 'i' - cutter; xprinter android example shows as GS V \1 (1D 56 01)
+ * esc '8' - wait
+ */
 
-static inline int hi(int val) { return lo(val >> 8); }
+/* todo:
+ * generate pulse by esc p 0/ esc p 1/
+ * XPrinter 58
+ */
+
+// define printer initialize command
+static const char escInit[] = "\x1b@";
+
+// define cashDrawerEjector command
+static const char escCashDrawer1Eject[] = "\x1bp\0@P";
+static const char escCashDrawer2Eject[] = "\x1bp\1@P";
+
+// define raster mode start command
+static const char escRasterMode[] = "\x1dv0\0";
+
+// define flush command
+static const char escFlush[] = "\x1bJ";
+
+// define cut command
+static const char escCut[] = "\x1bi";
 
 // enter raster mode and set up x and y dimensions
-static inline void rasterheader(int xsize, int ysize) {
-  outputCommand(rasterModeStartCommand);
-  mputchar(lo(xsize));
-  mputchar(hi(xsize));
-  mputchar(lo(ysize));
-  mputchar(hi(ysize));
+static inline void sendRasterHeader(int xsize, int ysize) {
+  //  outputCommand(rasterModeStartCommand);
+  SendCommand(escRasterMode);
+  mputnum(xsize);
+  mputnum(ysize);
 }
 
 // print all unprinted (i.e. flush the buffer)
-// then feed given number of lines
-static inline void skiplines(int size) {
-  mputchar(0x1b);
-  mputchar(0x4a); // esc j
-  mputchar(size);
+static inline void flushBuffer() {
+  SendCommand(escFlush);
+  mputchar(0);
 }
 
-// get an option
-static inline int getOptionChoiceIndex(const char *choiceName,
-                                       ppd_file_t *ppd) {
-  ppd_choice_t *choice;
-  ppd_option_t *option;
-
-  choice = ppdFindMarkedChoice(ppd, choiceName);
-
-  if (choice == NULL) {
-    if ((option = ppdFindOption(ppd, choiceName)) == NULL)
-      return -1;
-    if ((choice = ppdFindChoice(option, option->defchoice)) == NULL)
-      return -1;
-  }
-
-  return atoi(choice->choice);
-}
-
-static void initializeSettings(char *commandLineOptionSettings) {
-  ppd_file_t *ppd = NULL;
-  cups_option_t *options = NULL;
-  int numOptions = 0;
-
-  ppd = ppdOpenFile(getenv("PPD"));
-
-  ppdMarkDefaults(ppd);
-
-  numOptions = cupsParseOptions(commandLineOptionSettings, 0, &options);
-  if ((numOptions != 0) && (options != NULL)) {
-    cupsMarkOptions(ppd, numOptions, options);
-    cupsFreeOptions(numOptions, options);
-  }
-
-  memset(&settings, 0x00, sizeof(struct settings_));
-
-  settings.cashDrawer1 = getOptionChoiceIndex("CashDrawer1Setting", ppd);
-  settings.cashDrawer2 = getOptionChoiceIndex("CashDrawer2Setting", ppd);
-  settings.blankSpace = getOptionChoiceIndex("BlankSpace", ppd);
-  settings.feedDist = getOptionChoiceIndex("FeedDist", ppd);
-
-  ppdClose(ppd);
+// flush, then feed 24 lines
+static inline void flushAndFeed() {
+  SendCommand(escFlush);
+  mputchar(0x18);
 }
 
 // sent on the beginning of print job
-void jobSetup() {
+void setupJob() {
   if (settings.cashDrawer1 == 1)
-    outputCommand(cashDrawerEject[0]);
+    SendCommand(escCashDrawer1Eject);
   if (settings.cashDrawer2 == 1)
-    outputCommand(cashDrawerEject[1]);
-  outputCommand(printerInitializeCommand);
+    SendCommand(escCashDrawer2Eject);
+  SendCommand(escInit);
 }
 
 // sent at the very end of print job
-void ShutDown() {
+void finalizeJob() {
   if (settings.cashDrawer1 == 2)
-    outputCommand(cashDrawerEject[0]);
+    SendCommand(escCashDrawer1Eject);
   if (settings.cashDrawer2 == 2)
-    outputCommand(cashDrawerEject[1]);
-  outputCommand(printerInitializeCommand);
+    SendCommand(escCashDrawer2Eject);
+  SendCommand(escInit);
 }
 
 // sent at the end of every page
@@ -163,10 +168,10 @@ typedef void (*__sighandler_t)(int);
 #endif
 
 __sighandler_t old_signal;
-void EndPage() {
+void finishPage() {
   int i;
   for (i = 0; i < settings.feedDist; ++i)
-    skiplines(0x18);
+    flushAndFeed();
   signal(15, old_signal);
 }
 
@@ -175,166 +180,143 @@ void cancelJob() {
   int i = 0;
   for (; i < 0x258; ++i)
     mputchar(0);
-  EndPage();
-  ShutDown();
+  finishPage();
+  finalizeJob();
 }
 
 // invoked before starting to print a page
-void pageSetup() { old_signal = signal(15, cancelJob); }
+void beforePage() { old_signal = signal(15, cancelJob); }
+
+static inline int min(int a, int b) {
+  if (a > b)
+    return b;
+  return a;
+}
 
 //////////////////////////////////////////////
 //////////////////////////////////////////////
 int main(int argc, char *argv[]) {
-  int fd = 0;                 // File descriptor providing CUPS raster data
-  cups_raster_t *ras = NULL;  // Raster stream for printing
-  cups_page_header2_t header; // CUPS Page header
-  int page = 0;               // Current page
-  int y = 0; // Vertical position in page 0 <= y <= header.cupsHeight
-
-  unsigned char *rasterData = NULL; // Pointer to raster data from CUPS
-  unsigned char *originalRasterDataPtr =
-      NULL; // Copy of original pointer for freeing buffer
-
   if (argc < 6 || argc > 7) {
     fputs("ERROR: rastertozj job-id user title copies options [file]\n",
           stderr);
     return EXIT_FAILURE;
   }
 
+  int fd = STDIN_FILENO; // File descriptor providing CUPS raster data
   if (argc == 7) {
     if ((fd = open(argv[6], O_RDONLY)) == -1) {
       perror("ERROR: Unable to open raster file - ");
       sleep(1);
       return EXIT_FAILURE;
     }
-  } else
-    fd = 0;
+  }
 
-#ifdef DEBUGP
-  lfd = fopen(DEBUGFILE, "w");
-#endif
+  int iCurrentPage = 0;
+  // CUPS Page tHeader
+  cups_page_header2_t tHeader;
+  unsigned char *pRasterBuf = NULL; // Pointer to raster data from CUPS
+  // Raster stream for printing
+  cups_raster_t *pRasterSrc = cupsRasterOpen(fd, CUPS_RASTER_READ);
+  initializeSettings(argv[5],&settings);
 
-  initializeSettings(argv[5]);
-  jobSetup();
-  ras = cupsRasterOpen(fd, CUPS_RASTER_READ);
-  page = 0;
+  setupJob();
 
-  while (cupsRasterReadHeader2(ras, &header)) {
-    if ((header.cupsHeight == 0) || (header.cupsBytesPerLine == 0))
+  DEBUGSTARTPRINT();
+
+  // loop over the whole raster, page by page
+  while (cupsRasterReadHeader2(pRasterSrc, &tHeader)) {
+    if ((!tHeader.cupsHeight) || (!tHeader.cupsBytesPerLine))
       break;
 
-#ifdef DEBUGP
-    if (lfd)
-      fprintf(lfd, "\nheader.cupsHeight=%d, header.cupsBytesPerLine=%d\n",
-              header.cupsHeight, header.cupsBytesPerLine);
-#endif
+    DEBUGPRINT("tHeader.cupsHeight=%d, tHeader.cupsBytesPerLine=%d\n",
+               tHeader.cupsHeight, tHeader.cupsBytesPerLine);
 
-    if (rasterData == NULL) {
-      rasterData = malloc(header.cupsBytesPerLine * 24);
-      if (rasterData == NULL) {
-        if (originalRasterDataPtr != NULL)
-          free(originalRasterDataPtr);
-        cupsRasterClose(ras);
-        if (fd != 0)
+    if (!pRasterBuf) {
+      pRasterBuf = malloc(tHeader.cupsBytesPerLine * 24);
+      if (!pRasterBuf) { // hope it never goes here...
+        cupsRasterClose(pRasterSrc);
+        if (fd)
           close(fd);
         return EXIT_FAILURE;
       }
-      originalRasterDataPtr = rasterData; // used to later free the memory
     }
 
-    fprintf(stderr, "PAGE: %d %d\n", ++page, header.NumCopies);
-    pageSetup();
+    fprintf(stderr, "PAGE: %d %d\n", ++iCurrentPage, tHeader.NumCopies);
 
-    int foo = (header.cupsWidth > 0x180) ? 0x180 : header.cupsWidth;
+    beforePage();
+
+    // calculate num of bytes to print given width having 1 bit per pixel.
+    int foo = min(tHeader.cupsWidth, 0x180);
     foo = (foo + 7) & 0xFFFFFFF8;
-    int width_size = foo >> 3;
+    int width_bytes = foo >> 3; // in bytes, [0..0x30]
 
-#ifdef DEBUGP
-    if (lfd)
-      fprintf(lfd, "\nheader.cupsWidth=%d, foo=%d, width_size=%d\n",
-              header.cupsWidth, foo, width_size);
-#endif
-    y = 0;
+    DEBUGPRINT("tHeader.cupsWidth=%d, foo=%d, width_size=%d\n", tHeader.cupsWidth,
+               foo, width_bytes);
+
+    int iPageYPos = 0; // Vertical position in page. [0..tHeader.cupsHeight]
     int zeroy = 0;
 
-    while (y < header.cupsHeight) {
-      if ((y & 127) != 0)
-        fprintf(stderr, "INFO: Printing page %d, %d%% complete...\n", page,
-                (100 * y / header.cupsHeight));
+    // loop over one page, top to bottom by blocks of most 24 scan lines
+    while (iPageYPos < tHeader.cupsHeight) {
+      if (iPageYPos & 127)
+        fprintf(stderr, "INFO: Printing iCurrentPage %d, %d%% complete...\n", iCurrentPage,
+                (100 * iPageYPos / tHeader.cupsHeight));
 
-      int rest = header.cupsHeight - y;
-      if (rest > 24)
-        rest = 24;
+      int iBlockHeight = min(tHeader.cupsHeight - iPageYPos, 24);
 
-#ifdef DEBUGP
-      if (lfd)
-        fprintf(lfd, "\nProcessing block of %d, starting from %d lines\n", rest,
-                y);
-#endif
-      y += rest;
+      DEBUGPRINT("Processing block of %d, starting from %d lines\n", iBlockHeight, iPageYPos);
+      iPageYPos += iBlockHeight;
 
-      if (y) {
-        unsigned char *buf = rasterData;
+      if (iPageYPos) {
+        unsigned char *buf = pRasterBuf;
         int j;
-        for (j = 0; j < rest; ++j) {
-          if (!cupsRasterReadPixels(ras, buf, header.cupsBytesPerLine))
+        for (j = 0; j < iBlockHeight; ++j) {
+          if (!cupsRasterReadPixels(pRasterSrc, buf, tHeader.cupsBytesPerLine))
             break;
-          buf += width_size;
+          buf += width_bytes;
         }
-#ifdef DEBUGP
-        if (lfd)
-          fprintf(lfd, "\nRead %d lines\n", j);
-#endif
-        if (j < rest)
+        DEBUGPRINT("Read %d lines\n", j);
+        if (j < iBlockHeight) // wtf?
           continue;
       }
-      int rest_bytes = rest * width_size;
+      int rest_bytes = iBlockHeight * width_bytes;
       int j;
       for (j = 0; j < rest_bytes; ++j)
-        if (rasterData[j] != 0)
+        if (pRasterBuf[j])
           break;
 
-#ifdef DEBUGP
-      if (lfd)
-        fprintf(lfd, "\nChecked %d bytes of %d for zero\n", j, rest_bytes);
-#endif
+      DEBUGPRINT("Checked %d bytes of %d for zero\n", j, rest_bytes);
 
-      if (j >= rest_bytes) {
+      if (j >= rest_bytes) { // true, if whole block iz zeroes
         ++zeroy;
         continue;
       }
 
       for (; zeroy > 0; --zeroy)
-        skiplines(24);
+        flushAndFeed();
 
-      rasterheader(width_size, rest);
-      outputarray((char *)rasterData, width_size * 24);
-      skiplines(0);
+      sendRasterHeader(width_bytes, iBlockHeight);
+      outputarray((char *)pRasterBuf, rest_bytes);
+      flushBuffer();
     }
 
-    if (!settings.blankSpace)
+    if (settings.blankSpace)
       for (; zeroy > 0; --zeroy)
-        skiplines(24);
+        flushAndFeed();
 
-    EndPage();
+    finishPage();
   }
 
-  ShutDown();
-
-  if (originalRasterDataPtr)
-    free(originalRasterDataPtr);
-  cupsRasterClose(ras);
+  finalizeJob();
+  if (pRasterBuf)
+    free(pRasterBuf);
+  cupsRasterClose(pRasterSrc);
   if (fd)
     close(fd);
-
-  fputs(page ? "INFO: Ready to print.\n" : "ERROR: No pages found!\n", stderr);
-
-#ifdef DEBUGP
-  if (lfd)
-    fclose(lfd);
-#endif
-
-  return page ? EXIT_SUCCESS : EXIT_FAILURE;
+  fputs(iCurrentPage ? "INFO: Ready to print.\n" : "ERROR: No pages found!\n",
+        stderr);
+  DEBUGFINISHPRINT();
+  return iCurrentPage ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 // end of rastertozj.c
