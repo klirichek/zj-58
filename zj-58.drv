@@ -30,10 +30,11 @@
   ColorDevice False
   Cutter true
 
-  *CustomMedia "X48MMY105MM/58mm x 105mm" 136.00 298.00 0.00 0.00 0.00 0.00 "<</PageSize[136 298]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 298]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
-  CustomMedia "X48MMY210MM/58mm x 210mm" 136.00 595.00 0.00 0.00 0.00 0.00 "<</PageSize[136 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
-  CustomMedia "X48MMY297MM/58mm x 297mm" 136.00 842.00 0.00 0.00 0.00 0.00 "<</PageSize[136 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
-  CustomMedia "X48MMY3276MM/58mm x 3276mm" 136.00 9286.00 0.00 0.00 0.00 0.00 "<</PageSize[136 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+  *CustomMedia "X48MMY65MM/58mm x 105mm" 136 182 0 0 0 0 "<</PageSize[136 182]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 219]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+  CustomMedia "X48MMY105MM/58mm x 105mm" 136 298 0 0 0 0 "<</PageSize[136 298]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 298]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+  CustomMedia "X48MMY210MM/58mm x 210mm" 136 595 0 0 0 0 "<</PageSize[136 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+  CustomMedia "X48MMY297MM/58mm x 297mm" 136 842 0 0 0 0 "<</PageSize[136 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+  CustomMedia "X48MMY3276MM/58mm x 3276mm" 136 9286 0 0 0 0 "<</PageSize[136 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 
   Group "CutGroup/Cut Options"
     Option "FeedDist/Feed distance after print" PickOne AnySetup 10

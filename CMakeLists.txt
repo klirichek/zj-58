@@ -18,16 +18,20 @@ find_package ( Cups REQUIRED )
 find_library ( CUPSIMAGELIB NAMES cupsimage )
 mark_as_advanced ( CUPSIMAGELIB )
 
-set ( DEBUGFILE "/tmp/debugraster.txt" CACHE STRING "File where to make debug output if DEBUGP is set" )
-option ( DEBUGP "Whetner to output debug info" OFF )
-
 add_executable ( rastertozj rastertozj.c )
 target_compile_options ( rastertozj PRIVATE -Wall -fPIC )
 target_include_directories ( rastertozj PRIVATE ${CUPS_INCLUDE_DIR} )
 target_link_libraries ( rastertozj PRIVATE ${CUPS_LIBRARIES} ${CUPSIMAGELIB} )
 
-if ( DEBUGP )
-	target_compile_definitions ( rastertozj PRIVATE DEBUGP DEBUGFILE="${DEBUGFILE}")
+if ( CMAKE_BUILD_TYPE STREQUAL "Debug" )
+	target_compile_definitions ( rastertozj PRIVATE DEBUGP )
+	if ( APPLE )
+		target_compile_definitions ( rastertozj PRIVATE SAFEDEBUG )
+		message ( STATUS "On Mac OSX log is saved in sandbox, as /private/var/spool/cups/tmp" )
+	elseif ( UNIX )
+		set ( DEBUGFILE "/tmp/debugraster.txt" CACHE STRING "File where to make debug output if we build ad Debug" )
+		target_compile_definitions ( rastertozj PRIVATE DEBUGFILE="${DEBUGFILE}" )
+	endif ()
 endif ()
 
 # build ppds
@@ -47,10 +51,8 @@ endif()
 
 # installation stuff
 
-# this one works if you perform 'make install'
+# Set both installation prefixes to /
 set ( CMAKE_INSTALL_PREFIX "/" CACHE FILEPATH "this is forced to /" FORCE )
-
-# this one works if you perform 'make package' - it is kind of root for all packaging
 set ( CPACK_PACKAGING_INSTALL_PREFIX "/" )
 
 if ( APPLE )

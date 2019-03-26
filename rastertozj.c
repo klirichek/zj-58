@@ -3,6 +3,7 @@
 #include <cups/cups.h>
 #include <cups/ppd.h>
 #include <cups/raster.h>
+#include <cups/sidechannel.h>
 #include <fcntl.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -59,14 +60,28 @@ static inline void mputchar(char c) { putchar(c); }
 #define DEBUGPRINT(...)
 #else
 FILE *lfd = 0;
-// putchar with debug wrapper
+// putchar with debug wrappers
 static inline void mputchar(char c) {
   unsigned char m = c;
   if (lfd)
     fprintf(lfd, "%02x ", m);
   putchar(m);
 }
+// on macos cups filters works in a sandbox and cant write
+// filtes everywhere. We'll use $TMPDIR/debugraster.txt for them
+#ifdef SAFEDEBUG
+static inline void DEBUGSTARTPRINT() {
+  char * tmpfolder = getenv("TMPDIR");
+  const char *filename = "/debugraster.txt";
+  char *dbgpath = (char *)malloc(strlen(tmpfolder) + strlen(filename) + 1);
+  strcpy(dbgpath,tmpfolder);
+  strcat(dbgpath,filename);
+  lfd = fopen(dbgpath,"w");
+  free(dbgpath);
+}
+#else
 #define DEBUGSTARTPRINT() lfd = fopen(DEBUGFILE, "w")
+#endif
 #define DEBUGFINISHPRINT()                                                     \
   if (lfd)                                                                     \
   fclose(lfd)
@@ -124,6 +139,8 @@ static const char escFlush[] = "\x1bJ";
 // define cut command
 static const char escCut[] = "\x1bi";
 
+static const char getStatus[] = "\x10\x04\x04";
+
 // enter raster mode and set up x and y dimensions
 static inline void sendRasterHeader(int xsize, int ysize) {
   //  outputCommand(rasterModeStartCommand);
@@ -146,11 +163,11 @@ static inline void flushAndFeed() {
 
 // sent on the beginning of print job
 void setupJob() {
+  SendCommand(escInit);
   if (settings.cashDrawer1 == 1)
     SendCommand(escCashDrawer1Eject);
   if (settings.cashDrawer2 == 1)
     SendCommand(escCashDrawer2Eject);
-  SendCommand(escInit);
 }
 
 // sent at the very end of print job
@@ -211,6 +228,8 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  DEBUGSTARTPRINT();
+
   int iCurrentPage = 0;
   // CUPS Page tHeader
   cups_page_header2_t tHeader;
@@ -221,7 +240,8 @@ int main(int argc, char *argv[]) {
 
   setupJob();
 
-  DEBUGSTARTPRINT();
+  DEBUGPRINT("tHeader.cupsBitsPerColor=%d, tHeader.cupsBitsPerPixel=%d\n",
+             tHeader.cupsBitsPerColor, tHeader.cupsBitsPerPixel);
 
   // loop over the whole raster, page by page
   while (cupsRasterReadHeader2(pRasterSrc, &tHeader)) {
