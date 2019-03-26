@@ -54,21 +54,36 @@ endif()
 # Set both installation prefixes to /
 set ( CMAKE_INSTALL_PREFIX "/" CACHE FILEPATH "this is forced to /" FORCE )
 set ( CPACK_PACKAGING_INSTALL_PREFIX "/" )
+set ( CPACK_PACKAGE_CONTACT "Alexey N. Vinogradov (a.n.vinogradov@gmail.com)" )
+
+set ( CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON )
+set ( CPACK_DEBIAN_PACKAGE_PREDEPENDS "libcups2-dev, libcupsimage2-dev" )
+set ( CPACK_DEBIAN_PACKAGE_SECTION "libs" )
+set ( CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/klirichek/zj-58")
 
 if ( APPLE )
 	set ( FILTERPATH "usr/libexec/cups/filter" )
 	set ( PPDPATH "Library/Printers/PPDs/Contents/Resources")
+	set ( OWNER "root:wheel")
+	#install ( CODE "EXECUTE_PROCESS(COMMAND /etc/init.d/cups stop)" )
+	install ( TARGETS rastertozj DESTINATION ${FILTERPATH} )
+	# this line sets correct target permissions, due to CUPS requirements
+	# However as a side effect you'll need either fakeroot, either sudo to even perform 'make package' because of it.
+	install ( CODE "EXECUTE_PROCESS(COMMAND chown ${OWNER} \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${FILTERPATH}/rastertozj\")" )
+	install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/zj58.ppd DESTINATION "${PPDPATH}" )
+	#	install ( CODE "EXECUTE_PROCESS(COMMAND /etc/init.d/cups start)" )
 elseif ( UNIX )
 	set ( FILTERPATH "usr/lib/cups/filter" )
 	set ( PPDPATH "usr/share/cups/model/zjiang/" )
+	set ( OWNER "root:root")
+	install ( CODE "EXECUTE_PROCESS(COMMAND /etc/init.d/cups stop)" )
+	install ( TARGETS rastertozj DESTINATION ${FILTERPATH} )
+	# this line sets correct target permissions, due to CUPS requirements
+	# However as a side effect you'll need either fakeroot, either sudo to even perform 'make package' because of it.
+	install ( CODE "EXECUTE_PROCESS(COMMAND chown ${OWNER} \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${FILTERPATH}/rastertozj\")" )
+	install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/zj58.ppd DESTINATION "${PPDPATH}" )
+	install ( CODE "EXECUTE_PROCESS(COMMAND /etc/init.d/cups start)" )
 endif()
-
-install ( TARGETS rastertozj DESTINATION ${FILTERPATH} )
-# this line sets correct target permissions, due to CUPS requirements
-# However as a side effect you'll need either fakeroot, either sudo to even perform 'make package' because of it.
-install ( CODE "EXECUTE_PROCESS(COMMAND chown root:wheel \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${FILTERPATH}/rastertozj\")" )
-
-install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/zj58.ppd DESTINATION "${PPDPATH}" )
 
 include (CPack)
 

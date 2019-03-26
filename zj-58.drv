@@ -30,7 +30,16 @@
   ColorDevice False
   Cutter true
 
-  *CustomMedia "X48MMY65MM/58mm x 105mm" 136 182 0 0 0 0 "<</PageSize[136 182]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 219]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+  Installable "OptionCutter/Cutter Present"
+  UIConstraints "*CutMedia *OptionCutter False"
+
+  // Custom page sizes
+  HWMargins 0 0 0 0
+  VariablePaperSize Yes
+  MinSize 58mm 20mm
+  MaxSize 58mm 3276mm
+
+  *CustomMedia "X48MMY65MM/58mm x 65mm" 136 182 0 0 0 0 "<</PageSize[136 182]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 219]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
   CustomMedia "X48MMY105MM/58mm x 105mm" 136 298 0 0 0 0 "<</PageSize[136 298]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 298]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
   CustomMedia "X48MMY210MM/58mm x 210mm" 136 595 0 0 0 0 "<</PageSize[136 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
   CustomMedia "X48MMY297MM/58mm x 297mm" 136 842 0 0 0 0 "<</PageSize[136 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
@@ -53,18 +62,20 @@
       Choice "12feed39mm/feed 39mm" ""
       Choice "13feed42mm/feed 42mm" ""
       Choice "14feed45mm/feed 45mm" ""
+
     Option "BlankSpace/Blank space at page's end" Boolean AnySetup 10
       Choice "True/Print" ""
-      *Choice "False/Do not print" ""
+      *Choice "False/None" ""
 
   Group "*CashDrawerGroup/Cash Drawer Control"
     Option "CashDrawer1Setting/Cash Drawer 1" PickOne AnySetup 10
-      *Choice "0NoCashDrawer1/Not Cash Drawer 1" ""
-      Choice "1CashDrawer1BeforePrinting/Cash Drawer 1 Before Printing" ""
-      Choice "2CashDrawer1AfterPrinting/Cash Drawer 1 After Printing" ""
+      *Choice "0NoCashDrawer1/None" ""
+      Choice "1CashDrawer1BeforePrinting/Before Printing" ""
+      Choice "2CashDrawer1AfterPrinting/After Printing" ""
+
     Option "CashDrawer2Setting/Cash Drawer 2" PickOne AnySetup 10
-      *Choice "0NoCashDrawer2/Not Cash Drawer 2" ""
-      Choice "1CashDrawer2BeforePrinting/Cash Drawer 2 Before Printing" ""
-      Choice "2CashDrawer2AfterPrinting/Cash Drawer 2 After Printing" ""
+      *Choice "0NoCashDrawer2/None" ""
+      Choice "1CashDrawer2BeforePrinting/Before Printing" ""
+      Choice "2CashDrawer2AfterPrinting/After Printing" ""
 
 }
