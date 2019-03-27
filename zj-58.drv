@@ -30,7 +30,7 @@
   ColorDevice False
   Cutter true
 
-  Installable "OptionCutter/Cutter Present"
+  Installable "OptionCutter/Has cutter"
   UIConstraints "*CutMedia *OptionCutter False"
 
   // Custom page sizes
@@ -39,13 +39,13 @@
   MinSize 58mm 20mm
   MaxSize 58mm 3276mm
 
-  *CustomMedia "X48MMY65MM/58mm x 65mm" 136 182 0 0 0 0 "<</PageSize[136 182]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 219]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
-  CustomMedia "X48MMY105MM/58mm x 105mm" 136 298 0 0 0 0 "<</PageSize[136 298]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 298]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
-  CustomMedia "X48MMY210MM/58mm x 210mm" 136 595 0 0 0 0 "<</PageSize[136 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
-  CustomMedia "X48MMY297MM/58mm x 297mm" 136 842 0 0 0 0 "<</PageSize[136 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
-  CustomMedia "X48MMY3276MM/58mm x 3276mm" 136 9286 0 0 0 0 "<</PageSize[136 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+  *CustomMedia "X58MMY65MM/58mm x 65mm" 164 182 0 0 0 0 "<</PageSize[164 182]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 182]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+  CustomMedia "X58MMY105MM/58mm x 105mm" 164 298 0 0 0 0 "<</PageSize[164 298]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 298]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+  CustomMedia "X58MMY210MM/58mm x 210mm" 164 595 0 0 0 0 "<</PageSize[164 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+  CustomMedia "X58MMY297MM/58mm x 297mm" 164 842 0 0 0 0 "<</PageSize[164 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+  CustomMedia "X58MMY3276MM/58mm x 3276mm" 164 9286 0 0 0 0 "<</PageSize[164 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
 
-  Group "CutGroup/Cut Options"
+  Group "BlankGroup/Blank Options"
     Option "FeedDist/Feed distance after print" PickOne AnySetup 10
       Choice "0feed3mm/feed 3mm" ""
       Choice "1feed6mm/feed 6mm" ""
@@ -69,13 +69,18 @@
 
   Group "*CashDrawerGroup/Cash Drawer Control"
     Option "CashDrawer1Setting/Cash Drawer 1" PickOne AnySetup 10
-      *Choice "0NoCashDrawer1/None" ""
-      Choice "1CashDrawer1BeforePrinting/Before Printing" ""
-      Choice "2CashDrawer1AfterPrinting/After Printing" ""
+      *Choice "None/None" ""
+      Choice "1BeforePrinting/Before Printing" ""
+      Choice "1AfterPrinting/After Printing" ""
 
     Option "CashDrawer2Setting/Cash Drawer 2" PickOne AnySetup 10
-      *Choice "0NoCashDrawer2/None" ""
-      Choice "1CashDrawer2BeforePrinting/Before Printing" ""
-      Choice "2CashDrawer2AfterPrinting/After Printing" ""
+      *Choice "None/None" ""
+      Choice "2BeforePrinting/Before Printing" ""
+      Choice "2AfterPrinting/After Printing" ""
 
+  Installable "OptionCash1/Has cash drawer 1"
+  UIConstraints "*CashDrawer1Setting *OptionCash1 False"
+
+  Installable "OptionCash2/Has cash drawer 2"
+  UIConstraints "*CashDrawer2Setting *OptionCash2 False"
 }
