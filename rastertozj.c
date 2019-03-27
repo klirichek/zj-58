@@ -18,6 +18,7 @@ struct settings_ {
   int cashDrawer2;
   int blankSpace;
   int feedDist;
+  int modelNum;
 };
 struct settings_ settings;
 
@@ -49,6 +50,7 @@ static void initializeSettings(char *commandLineOptionSettings, struct settings_
   pSettings->cashDrawer2 = getOptionChoiceIndex("CashDrawer2Setting", pPpd);
   pSettings->blankSpace = getOptionChoiceIndex("BlankSpace", pPpd);
   pSettings->feedDist = getOptionChoiceIndex("FeedDist", pPpd);
+  pSettings->modelNum = pPpd->model_number;
 
   ppdClose(pPpd);
 }
@@ -109,13 +111,13 @@ static inline void mputnum(unsigned int val) {
  *
  * initialize - esc @
  * cash drawer 1 - esc p 0 @ P
- * cash drawer 2 - esc p 1 @ P  // @ and P <N> and <M>
+ * cash drawer 2 - esc p 1 @ P  // @ =0x40 and P=0x50 <N> and <M>
  *    where <N>*2ms is pulse on time, <M>*2ms is pulse off.
  * start raster - GS v 0 // 0 is full-density, may be also 1, 2, 4
  * skip lines - esc J // then N [0..255], each value 1/44 inches (0.176mm)
  * // another commands out-of-spec:
  * esc 'i' - cutter; xprinter android example shows as GS V \1 (1D 56 01)
- * esc '8' - wait
+ * esc '8' - wait{4, cutter also (char[4]){29,'V','A',20}}; GS V 'A' 20
  */
 
 /* todo:
@@ -202,12 +204,126 @@ void cancelJob() {
 }
 
 // invoked before starting to print a page
-void beforePage() { old_signal = signal(15, cancelJob); }
+void startPage() { old_signal = signal(15, cancelJob); }
 
 static inline int min(int a, int b) {
   if (a > b)
     return b;
   return a;
+}
+
+void DebugPrintHeader (cups_page_header2_t* pHeader)
+{
+  DEBUGPRINT(
+      "MediaClass '%s'\n"
+      "MediaColor '%s'\n"
+      "MediaType '%s'\n"
+      "OutputType '%s'\n"
+      "AdvanceDistance %d\n"
+      "AdvanceMedia %d\n"
+      "Collate %d\n"
+      "CutMedia %d\n"
+      "Duplex %d\n"
+      "HWResolution %d %d\n"
+      "ImagingBoundingBox %d %d %d %d\n"
+      "InsertSheet %d\n"
+      "Jog %d\n"
+      "LeadingEdge %d\n"
+      "Margins %d %d\n"
+      "ManualFeed %d\n"
+      "MediaPosition %d\n"
+      "MediaWeight %d\n"
+      "MirrorPrint %d\n"
+      "NegativePrint %d\n"
+      "NumCopies %d\n"
+      "Orientation %d\n"
+      "OutputFaceUp %d\n"
+      "PageSize %d %d\n"
+      "Separations %d\n"
+      "TraySwitch %d\n"
+      "Tumble %d\n"
+      "cupsWidth %d\n"
+      "cupsHeight %d\n"
+      "cupsMediaType %d\n"
+      "cupsBitsPerColor %d\n"
+      "cupsBitsPerPixel %d\n"
+      "cupsBytesPerLine %d\n"
+      "cupsColorOrder %d\n"
+      "cupsColorSpace %d\n"
+      "cupsCompression %d\n"
+      "cupsRowCount %d\n"
+      "cupsRowFeed %d\n"
+      "cupsRowStep %d\n"
+      "cupsNumColors %d\n"
+      "cupsBorderlessScalingFactor %f\n"
+      "cupsPageSize %f %f\n"
+      "cupsImagingBBox %f %f %f %f\n"
+      "cupsInteger %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d\n"
+      "cupsReal %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f\n"
+      "cupsString '%s' '%s' '%s' '%s' '%s' '%s' '%s' '%s' '%s' '%s' '%s' '%s' '%s' '%s' '%s' '%s'\n"
+      "cupsMarkerType '%s'\n"
+      "cupsRenderingIntent '%s'\n"
+      "cupsPageSizeName '%s'\n",
+      pHeader->MediaClass, pHeader->MediaColor, pHeader->MediaType,
+      pHeader->OutputType, pHeader->AdvanceDistance, pHeader->AdvanceMedia,
+      pHeader->Collate, pHeader->CutMedia, pHeader->Duplex,
+      pHeader->HWResolution[0], pHeader->HWResolution[1],
+      pHeader->ImagingBoundingBox[0], pHeader->ImagingBoundingBox[1],
+      pHeader->ImagingBoundingBox[2], pHeader->ImagingBoundingBox[3],
+      pHeader->InsertSheet, pHeader->Jog, pHeader->LeadingEdge, pHeader->Margins[0],
+      pHeader->Margins[1], pHeader->ManualFeed, pHeader->MediaPosition,
+      pHeader->MediaWeight, pHeader->MirrorPrint, pHeader->NegativePrint,
+      pHeader->NumCopies, pHeader->Orientation, pHeader->OutputFaceUp,
+      pHeader->PageSize[0], pHeader->PageSize[1], pHeader->Separations,
+      pHeader->TraySwitch, pHeader->Tumble, pHeader->cupsWidth, pHeader->cupsHeight,
+      pHeader->cupsMediaType, pHeader->cupsBitsPerColor, pHeader->cupsBitsPerPixel,
+      pHeader->cupsBytesPerLine, pHeader->cupsColorOrder, pHeader->cupsColorSpace,
+      pHeader->cupsCompression, pHeader->cupsRowCount, pHeader->cupsRowFeed,
+      pHeader->cupsRowStep, pHeader->cupsNumColors,
+      pHeader->cupsBorderlessScalingFactor, pHeader->cupsPageSize[0],
+      pHeader->cupsPageSize[1], pHeader->cupsImagingBBox[0],
+      pHeader->cupsImagingBBox[1], pHeader->cupsImagingBBox[2],
+      pHeader->cupsImagingBBox[3], pHeader->cupsInteger[0],
+      pHeader->cupsInteger[1], pHeader->cupsInteger[2], pHeader->cupsInteger[3],
+      pHeader->cupsInteger[4], pHeader->cupsInteger[5], pHeader->cupsInteger[6],
+      pHeader->cupsInteger[7], pHeader->cupsInteger[8], pHeader->cupsInteger[9],
+      pHeader->cupsInteger[10], pHeader->cupsInteger[11], pHeader->cupsInteger[12],
+      pHeader->cupsInteger[13], pHeader->cupsInteger[14], pHeader->cupsInteger[15],
+      pHeader->cupsReal[0], pHeader->cupsReal[1], pHeader->cupsReal[2],
+      pHeader->cupsReal[3], pHeader->cupsReal[4], pHeader->cupsReal[5],
+      pHeader->cupsReal[6], pHeader->cupsReal[7], pHeader->cupsReal[8],
+      pHeader->cupsReal[9], pHeader->cupsReal[10], pHeader->cupsReal[11],
+      pHeader->cupsReal[12], pHeader->cupsReal[13], pHeader->cupsReal[14],
+      pHeader->cupsReal[15], pHeader->cupsString[0], pHeader->cupsString[1],
+      pHeader->cupsString[2], pHeader->cupsString[3], pHeader->cupsString[4],
+      pHeader->cupsString[5], pHeader->cupsString[6], pHeader->cupsString[7],
+      pHeader->cupsString[8], pHeader->cupsString[9], pHeader->cupsString[10],
+      pHeader->cupsString[11], pHeader->cupsString[12], pHeader->cupsString[13],
+      pHeader->cupsString[14], pHeader->cupsString[15], pHeader->cupsMarkerType,
+      pHeader->cupsRenderingIntent, pHeader->cupsPageSizeName);
+}
+
+// rearrange (compress) rows in pBuf, discarding tails of them
+unsigned compress_buffer(unsigned char *pBuf, unsigned iSize,
+                         unsigned int iWideStride, unsigned int iStride) {
+  unsigned char *pEnd = pBuf + iSize;
+  unsigned char *pTarget = pBuf;
+  while (pBuf < pEnd) {
+    int iBytes = min(pEnd - pBuf, iStride);
+    memmove(pTarget, pBuf, iBytes);
+    pTarget += iBytes;
+    pBuf += iWideStride;
+  }
+  return min(iSize, pTarget - pBuf);
+}
+
+// returns -1 if whole line iz filled by zeros. Otherwise 0.
+int line_iz_empty(const unsigned char *pBuf, unsigned iSize) {
+  int i;
+  for (i = 0; i < iSize; ++i)
+    if (pBuf[i])
+      return 0;
+  return -1;
 }
 
 //////////////////////////////////////////////
@@ -230,6 +346,8 @@ int main(int argc, char *argv[]) {
 
   DEBUGSTARTPRINT();
 
+
+
   int iCurrentPage = 0;
   // CUPS Page tHeader
   cups_page_header2_t tHeader;
@@ -238,18 +356,25 @@ int main(int argc, char *argv[]) {
   cups_raster_t *pRasterSrc = cupsRasterOpen(fd, CUPS_RASTER_READ);
   initializeSettings(argv[5],&settings);
 
-  setupJob();
+  DEBUGPRINT("ModelNumber from PPD '%d'\n", settings.modelNum);
 
-  DEBUGPRINT("tHeader.cupsBitsPerColor=%d, tHeader.cupsBitsPerPixel=%d\n",
-             tHeader.cupsBitsPerColor, tHeader.cupsBitsPerPixel);
+  // set max num of pixels per line depended from model number (from ppd)
+  int iMaxWidth;
+  switch ( settings.modelNum )
+  {
+  case 80: iMaxWidth = 0x240; break;
+  case 58: iMaxWidth = 0x180; break;
+  default: iMaxWidth = 0x180; break;
+  }
+
+  setupJob();
 
   // loop over the whole raster, page by page
   while (cupsRasterReadHeader2(pRasterSrc, &tHeader)) {
     if ((!tHeader.cupsHeight) || (!tHeader.cupsBytesPerLine))
       break;
 
-    DEBUGPRINT("tHeader.cupsHeight=%d, tHeader.cupsBytesPerLine=%d\n",
-               tHeader.cupsHeight, tHeader.cupsBytesPerLine);
+    DebugPrintHeader ( &tHeader );
 
     if (!pRasterBuf) {
       pRasterBuf = malloc(tHeader.cupsBytesPerLine * 24);
@@ -263,39 +388,57 @@ int main(int argc, char *argv[]) {
 
     fprintf(stderr, "PAGE: %d %d\n", ++iCurrentPage, tHeader.NumCopies);
 
-    beforePage();
+    startPage();
 
     // calculate num of bytes to print given width having 1 bit per pixel.
-    int foo = min(tHeader.cupsWidth, 0x180);
+    int foo = min(tHeader.cupsWidth, iMaxWidth); // 0x240 for 80mm (72mm printable)
     foo = (foo + 7) & 0xFFFFFFF8;
     int width_bytes = foo >> 3; // in bytes, [0..0x30]
 
-    DEBUGPRINT("tHeader.cupsWidth=%d, foo=%d, width_size=%d\n", tHeader.cupsWidth,
-               foo, width_bytes);
+    DEBUGPRINT("cupsWidth=%d, cupsBytesPerLine=%d; foo=%d, width_bytes=%d",
+        tHeader.cupsWidth, tHeader.cupsBytesPerLine, foo, width_bytes );
 
-    int iPageYPos = 0; // Vertical position in page. [0..tHeader.cupsHeight]
+    int iRowsToPrint = tHeader.cupsHeight;
     int zeroy = 0;
 
     // loop over one page, top to bottom by blocks of most 24 scan lines
-    while (iPageYPos < tHeader.cupsHeight) {
-      if (iPageYPos & 127)
-        fprintf(stderr, "INFO: Printing iCurrentPage %d, %d%% complete...\n", iCurrentPage,
-                (100 * iPageYPos / tHeader.cupsHeight));
+    while (iRowsToPrint) {
+      fprintf(stderr, "INFO: Printing iCurrentPage %d, %d%% complete...\n",
+              iCurrentPage,
+              (100 * (tHeader.cupsHeight - iRowsToPrint) / tHeader.cupsHeight));
 
-      int iBlockHeight = min(tHeader.cupsHeight - iPageYPos, 24);
+      int iBlockHeight = min(iRowsToPrint, 24);
 
-      DEBUGPRINT("Processing block of %d, starting from %d lines\n", iBlockHeight, iPageYPos);
-      iPageYPos += iBlockHeight;
+      DEBUGPRINT("Processing block of %d, starting from %d lines\n",
+                 iBlockHeight, tHeader.cupsHeight - iRowsToPrint);
 
-      if (iPageYPos) {
-        unsigned char *buf = pRasterBuf;
-        int j;
-        for (j = 0; j < iBlockHeight; ++j) {
-          if (!cupsRasterReadPixels(pRasterSrc, buf, tHeader.cupsBytesPerLine))
-            break;
-          buf += width_bytes;
+      iRowsToPrint -= iBlockHeight;
+      unsigned iBytesChunk = 0;
+
+      if (iBlockHeight)
+        iBytesChunk = cupsRasterReadPixels(
+            pRasterSrc, pRasterBuf, tHeader.cupsBytesPerLine * iBlockHeight);
+
+      if (iBytesChunk && width_bytes < tHeader.cupsBytesPerLine)
+        iBytesChunk = compress_buffer(pRasterBuf, iBytesChunk,
+                                      tHeader.cupsBytesPerLine, width_bytes );
+
+      unsigned char *pBuf = pRasterBuf;
+      unsigned char *pChunk = pBuf;
+      unsigned char *pEnd = pBuf + iBytesChunk;
+      int nonzerolines = 0;
+      for (; iBlockHeight; --iBlockHeight) {
+        if (line_iz_empty(pBuf, width_bytes))
+        {
+          if (nonzerolines) // time to flush
         }
-        DEBUGPRINT("Read %d lines\n", j);
+          ++zeroy;
+        else
+          ++nonzerolines;
+      }
+
+
+      DEBUGPRINT("Read %d lines\n", j);
         if (j < iBlockHeight) // wtf?
           continue;
       }

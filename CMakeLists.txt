@@ -40,13 +40,21 @@ if ( NOT DEFINED PPDC )
 endif ()
 mark_as_advanced( PPDC )
 
+set ( PPDS "" )
 if ( PPDC )
-	set ( ENV{LANG} c )
-	execute_process (
-			COMMAND "${PPDC}" -d "${CMAKE_CURRENT_BINARY_DIR}" "zj-58.drv"
-			WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-			ERROR_QUIET
-			OUTPUT_STRIP_TRAILING_WHITESPACE )
+	set ( DRVSRC "${CMAKE_CURRENT_SOURCE_DIR}/zj-58.drv")
+	set ( PPDDIR "${CMAKE_CURRENT_BINARY_DIR}/ppd" )
+	list (APPEND PPDS "${PPDDIR}/zj58.ppd")
+	ADD_CUSTOM_COMMAND ( OUTPUT ${PPDS}
+			COMMAND LANG=c ${PPDC} ${DRVSRC}
+			MAIN_DEPENDENCY ${DRVSRC}
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+			COMMENT "Building PPDs"
+			VERBATIM
+			)
+	ADD_CUSTOM_TARGET ( ppds ALL DEPENDS ${PPDS} )
+else()
+	list (APPEND PPDS "${CMAKE_CURRENT_SOURCE_DIR}/ZJ-58.ppd")
 endif()
 
 # installation stuff
@@ -66,11 +74,13 @@ if ( APPLE )
 	set ( PPDPATH "Library/Printers/PPDs/Contents/Resources")
 	set ( OWNER "root:wheel")
 	#install ( CODE "EXECUTE_PROCESS(COMMAND /etc/init.d/cups stop)" )
+		# /private/etc/cups stop
+		# sudo launchctl stop org.cups.cupsd
 	install ( TARGETS rastertozj DESTINATION ${FILTERPATH} )
 	# this line sets correct target permissions, due to CUPS requirements
 	# However as a side effect you'll need either fakeroot, either sudo to even perform 'make package' because of it.
 	install ( CODE "EXECUTE_PROCESS(COMMAND chown ${OWNER} \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${FILTERPATH}/rastertozj\")" )
-	install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/zj58.ppd DESTINATION "${PPDPATH}" )
+	install ( FILES ${PPDS} "${PPDPATH}" )
 	#	install ( CODE "EXECUTE_PROCESS(COMMAND /etc/init.d/cups start)" )
 elseif ( UNIX )
 	set ( FILTERPATH "usr/lib/cups/filter" )
@@ -81,7 +91,7 @@ elseif ( UNIX )
 	# this line sets correct target permissions, due to CUPS requirements
 	# However as a side effect you'll need either fakeroot, either sudo to even perform 'make package' because of it.
 	install ( CODE "EXECUTE_PROCESS(COMMAND chown ${OWNER} \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${FILTERPATH}/rastertozj\")" )
-	install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/zj58.ppd DESTINATION "${PPDPATH}" )
+	install ( FILES ${PPDS} DESTINATION "${PPDPATH}" )
 	install ( CODE "EXECUTE_PROCESS(COMMAND /etc/init.d/cups start)" )
 endif()
 

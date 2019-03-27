@@ -1,9 +1,6 @@
 // CUPS PPD Compiler CUPS v2.1.3
 // (Don't edit .ppd directly, edit this file instead, then use 
 //	ppdc zj-58.drv to generate zj58.ppd)
-// Include necessary files...
-//#include <font.defs>
-//#include <media.defs>
 
 // Zijiang ZJ-58
 {
@@ -11,7 +8,7 @@
   ModelName "ZJ-58"
   PCFileName "zj58.ppd"
   Version "1.2"
-  DriverType ps
+  DriverType custom
   ModelNumber 58
   ManualCopies Yes
   Throughput 1
@@ -28,59 +25,114 @@
   Attribute "VariablePaperSize" "" "True"
   Filter "application/vnd.cups-raster 100 rastertozj"
   ColorDevice False
-  Cutter true
 
-  Installable "OptionCutter/Has cutter"
-  UIConstraints "*CutMedia *OptionCutter False"
+  Option "Resolution/Resolution" PickOne AnySetup 10
+   *Choice "203x203dpi/203 DPI Grayscale" "<</HWResolution[203 203]/cupsColorSpace 3>>setpagedevice"
 
   // Custom page sizes
-  HWMargins 0 0 0 0
   VariablePaperSize Yes
-  MinSize 58mm 20mm
-  MaxSize 58mm 3276mm
+  MinSize 164 56
+  MaxSize 164 9286
+  //MinSize 226 56 // that is for 80mm (72mm printable)
+  //MaxSize 226 9286
+  HWMargins 14 0 14 0
 
-  *CustomMedia "X58MMY65MM/58mm x 65mm" 164 182 0 0 0 0 "<</PageSize[164 182]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 182]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
-  CustomMedia "X58MMY105MM/58mm x 105mm" 164 298 0 0 0 0 "<</PageSize[164 298]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 298]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
-  CustomMedia "X58MMY210MM/58mm x 210mm" 164 595 0 0 0 0 "<</PageSize[164 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 595]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
-  CustomMedia "X58MMY297MM/58mm x 297mm" 164 842 0 0 0 0 "<</PageSize[164 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 842]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
-  CustomMedia "X58MMY3276MM/58mm x 3276mm" 164 9286 0 0 0 0 "<</PageSize[164 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice" "<</PageSize[164 9286]/HWResolution[203 203]/ImagingBBox null>>setpagedevice"
+  *CustomMedia "X58MMY65MM/58mm x 65mm" 164 182 14 0 14 0 "<</PageSize[164 182]/ImagingBBox null>>setpagedevice" "<</PageSize[164 182]/ImagingBBox null>>setpagedevice"
+  CustomMedia "X58MMY105MM/58mm x 105mm" 164 298 14 0 14 0 "<</PageSize[164 298]/ImagingBBox null>>setpagedevice" "<</PageSize[164 298]/ImagingBBox null>>setpagedevice"
+  CustomMedia "X58MMY210MM/58mm x 210mm" 164 595 14 0 14 0 "<</PageSize[164 595]/ImagingBBox null>>setpagedevice" "<</PageSize[164 595]/ImagingBBox null>>setpagedevice"
+  CustomMedia "X58MMY297MM/58mm x 297mm" 164 842 14 0 14 0 "<</PageSize[164 842]/ImagingBBox null>>setpagedevice" "<</PageSize[164 842]/ImagingBBox null>>setpagedevice"
+  CustomMedia "X58MMY3276MM/58mm x 3276mm" 164 9286 14 0 14 0 "<</PageSize[164 9286]/ImagingBBox null>>setpagedevice" "<</PageSize[164 9286]/ImagingBBox null>>setpagedevice"
 
   Group "BlankGroup/Blank Options"
     Option "FeedDist/Feed distance after print" PickOne AnySetup 10
-      Choice "0feed3mm/feed 3mm" ""
-      Choice "1feed6mm/feed 6mm" ""
-      *Choice "2feed9mm/feed 9mm" ""
-      Choice "3feed12mm/feed 12mm" ""
-      Choice "4feed15mm/feed 15mm" ""
-      Choice "5feed18mm/feed 18mm" ""
-      Choice "6feed21mm/feed 21mm" ""
-      Choice "7feed24mm/feed 24mm" ""
-      Choice "8feed27mm/feed 27mm" ""
-      Choice "9feed30mm/feed 30mm" ""
-      Choice "10feed33mm/feed 33mm" ""
-      Choice "11feed36mm/feed 36mm" ""
-      Choice "12feed39mm/feed 39mm" ""
-      Choice "13feed42mm/feed 42mm" ""
-      Choice "14feed45mm/feed 45mm" ""
+      Choice "0feed3mm/feed 3mm" "<</AdvanceDistance 24>>setpagedevice"
+      Choice "1feed6mm/feed 6mm" "<</AdvanceDistance 48>>setpagedevice"
+      *Choice "2feed9mm/feed 9mm" "<</AdvanceDistance 72>>setpagedevice"
+      Choice "3feed12mm/feed 12mm" "<</AdvanceDistance 96>>setpagedevice"
+      Choice "4feed15mm/feed 15mm" "<</AdvanceDistance 120>>setpagedevice"
+      Choice "5feed18mm/feed 18mm" "<</AdvanceDistance 144>>setpagedevice"
+      Choice "6feed21mm/feed 21mm" "<</AdvanceDistance 168>>setpagedevice"
+      Choice "7feed24mm/feed 24mm" "<</AdvanceDistance 192>>setpagedevice"
+      Choice "8feed27mm/feed 27mm" "<</AdvanceDistance 216>>setpagedevice"
+      Choice "9feed30mm/feed 30mm" "<</AdvanceDistance 240>>setpagedevice"
+      Choice "10feed33mm/feed 33mm" "<</AdvanceDistance 264>>setpagedevice"
+      Choice "11feed36mm/feed 36mm" "<</AdvanceDistance 288>>setpagedevice"
+      Choice "12feed39mm/feed 39mm" "<</AdvanceDistance 312>>setpagedevice"
+      Choice "13feed42mm/feed 42mm" "<</AdvanceDistance 336>>setpagedevice"
+      Choice "14feed45mm/feed 45mm" "<</AdvanceDistance 360>>setpagedevice"
 
     Option "BlankSpace/Blank space at page's end" Boolean AnySetup 10
-      Choice "True/Print" ""
-      *Choice "False/None" ""
+      Choice "True/Print" "<</AdvanceMedia 4>>setpagedevice"
+      *Choice "False/None" "<</AdvanceMedia 0>>setpagedevice"
 
   Group "*CashDrawerGroup/Cash Drawer Control"
     Option "CashDrawer1Setting/Cash Drawer 1" PickOne AnySetup 10
-      *Choice "None/None" ""
-      Choice "1BeforePrinting/Before Printing" ""
-      Choice "1AfterPrinting/After Printing" ""
+      *Choice "None/None" "<</cupsInteger0 0>>setpagedevice"
+      Choice "1BeforePrinting/Before Printing" "<</cupsInteger0 1>>setpagedevice"
+      Choice "1AfterPrinting/After Printing" "<</cupsInteger0 2>>setpagedevice"
 
     Option "CashDrawer2Setting/Cash Drawer 2" PickOne AnySetup 10
-      *Choice "None/None" ""
-      Choice "2BeforePrinting/Before Printing" ""
-      Choice "2AfterPrinting/After Printing" ""
+      *Choice "None/None" "<</cupsInteger1 0>>setpagedevice"
+      Choice "2BeforePrinting/Before Printing" "<</cupsInteger1 1>>setpagedevice"
+      Choice "2AfterPrinting/After Printing" "<</cupsInteger1 2>>setpagedevice"
 
-  Installable "OptionCash1/Has cash drawer 1"
+  Group "*CashDrawerTune/Cash Drawer Tune"
+    Option "CashDrawer1PulseOn/Cash Drawer 1 pulse ON time" PickOne AnySetup 10
+      Choice "None/None" ""
+      Choice "10XMS/32mS" "<</cupsInteger2 16>>setpagedevice"
+      Choice "20XMS/64mS" "<</cupsInteger2 32>>setpagedevice"
+      Choice "30XMS/96mS" "<</cupsInteger2 48>>setpagedevice"
+      *Choice "40XMS/128mS" "<</cupsInteger2 64>>setpagedevice"
+      Choice "50XMS/160mS" "<</cupsInteger2 80>>setpagedevice"
+      Choice "60XMS/192mS" "<</cupsInteger2 96>>setpagedevice"
+      Choice "70XMS/224mS" "<</cupsInteger2 112>>setpagedevice"
+      Choice "80XMS/256mS" "<</cupsInteger2 128>>setpagedevice"
+
+    Option "CashDrawer1PulseOff/Cash Drawer 1 pulse OFF time" PickOne AnySetup 10
+      Choice "None/None" ""
+      Choice "10XMS/32mS" "<</cupsInteger3 16>>setpagedevice"
+      Choice "20XMS/64mS" "<</cupsInteger3 32>>setpagedevice"
+      Choice "30XMS/96mS" "<</cupsInteger3 48>>setpagedevice"
+      Choice "40XMS/128mS" "<</cupsInteger3 64>>setpagedevice"
+      *Choice "50XMS/160mS" "<</cupsInteger3 80>>setpagedevice"
+      Choice "60XMS/192mS" "<</cupsInteger3 96>>setpagedevice"
+      Choice "70XMS/224mS" "<</cupsInteger3 112>>setpagedevice"
+      Choice "80XMS/256mS" "<</cupsInteger3 128>>setpagedevice"
+
+  Option "CashDrawer2PulseOn/Cash Drawer 2 pulse ON time" PickOne AnySetup 10
+    Choice "None/None" ""
+    Choice "10XMS/32mS" "<</cupsInteger4 16>>setpagedevice"
+    Choice "20XMS/64mS" "<</cupsInteger4 32>>setpagedevice"
+    Choice "30XMS/96mS" "<</cupsInteger4 48>>setpagedevice"
+    *Choice "40XMS/128mS" "<</cupsInteger4 64>>setpagedevice"
+    Choice "50XMS/160mS" "<</cupsInteger4 80>>setpagedevice"
+    Choice "60XMS/192mS" "<</cupsInteger4 96>>setpagedevice"
+    Choice "70XMS/224mS" "<</cupsInteger4 112>>setpagedevice"
+    Choice "80XMS/256mS" "<</cupsInteger4 128>>setpagedevice"
+
+  Option "CashDrawer2PulseOff/Cash Drawer 2 pulse OFF time" PickOne AnySetup 10
+    Choice "None/None" ""
+    Choice "10XMS/32mS" "<</cupsInteger5 16>>setpagedevice"
+    Choice "20XMS/64mS" "<</cupsInteger5 32>>setpagedevice"
+    Choice "30XMS/96mS" "<</cupsInteger5 48>>setpagedevice"
+    Choice "40XMS/128mS" "<</cupsInteger5 64>>setpagedevice"
+    *Choice "50XMS/160mS" "<</cupsInteger5 80>>setpagedevice"
+    Choice "60XMS/192mS" "<</cupsInteger5 96>>setpagedevice"
+    Choice "70XMS/224mS" "<</cupsInteger5 112>>setpagedevice"
+    Choice "80XMS/256mS" "<</cupsInteger5 128>>setpagedevice"
+
+
+  Installable "OptionCash1/Cash drawer 1"
   UIConstraints "*CashDrawer1Setting *OptionCash1 False"
+//  UIConstraints "*CashDrawer1PulseOn *OptionCash1 False"
+//  UIConstraints "*CashDrawer1PulseOff *OptionCash1 False"
 
-  Installable "OptionCash2/Has cash drawer 2"
+  Installable "OptionCash2/Cash drawer 2"
   UIConstraints "*CashDrawer2Setting *OptionCash2 False"
+//  UIConstraints "*CashDrawer2PulseOn *OptionCash2 False"
+//  UIConstraints "*CashDrawer2PulseOff *OptionCash2 False"
+
+  Cutter true
+  Installable "OptionCutter/Cutter"
+  UIConstraints "*CutMedia *OptionCutter False"
 }
