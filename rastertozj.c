@@ -12,6 +12,12 @@
 #define DEBUGFILE "/tmp/debugraster.txt"
 #endif
 
+static inline int min(int a, int b) {
+  if (a > b)
+    return b;
+  return a;
+}
+
 // settings and their stuff
 struct settings_ {
   int cashDrawer1;
@@ -37,6 +43,8 @@ static inline int getOptionChoiceIndex(const char *sChoiceName,
 static void initializeSettings(char *commandLineOptionSettings, struct settings_ *pSettings) {
   ppd_file_t *pPpd = ppdOpenFile(getenv("PPD"));
   ppdMarkDefaults(pPpd);
+
+  // char* sDestination = getenv("DestinationPrinterID");
 
   cups_option_t *pOptions = NULL;
   int iNumOptions = cupsParseOptions(commandLineOptionSettings, 0, &pOptions);
@@ -151,16 +159,26 @@ static inline void sendRasterHeader(int xsize, int ysize) {
   mputnum(ysize);
 }
 
+static inline void flushLines(unsigned short lines)
+{
+  SendCommand(escFlush);
+  mputchar (lines);
+}
+
 // print all unprinted (i.e. flush the buffer)
 static inline void flushBuffer() {
-  SendCommand(escFlush);
-  mputchar(0);
+  flushLines(0);
 }
 
 // flush, then feed 24 lines
-static inline void flushAndFeed() {
-  SendCommand(escFlush);
-  mputchar(0x18);
+static inline void flushManyLines(int iLines)
+{
+  while ( iLines )
+  {
+    int iStride = min (iLines, 24);
+    flushLines ( iStride );
+    iLines -= iStride;
+  }
 }
 
 // sent on the beginning of print job
@@ -178,7 +196,7 @@ void finalizeJob() {
     SendCommand(escCashDrawer1Eject);
   if (settings.cashDrawer2 == 2)
     SendCommand(escCashDrawer2Eject);
-  SendCommand(escInit);
+//  SendCommand(escInit);
 }
 
 // sent at the end of every page
@@ -188,9 +206,6 @@ typedef void (*__sighandler_t)(int);
 
 __sighandler_t old_signal;
 void finishPage() {
-  int i;
-  for (i = 0; i < settings.feedDist; ++i)
-    flushAndFeed();
   signal(15, old_signal);
 }
 
@@ -200,17 +215,10 @@ void cancelJob() {
   for (; i < 0x258; ++i)
     mputchar(0);
   finishPage();
-  finalizeJob();
 }
 
 // invoked before starting to print a page
 void startPage() { old_signal = signal(15, cancelJob); }
-
-static inline int min(int a, int b) {
-  if (a > b)
-    return b;
-  return a;
-}
 
 void DebugPrintHeader (cups_page_header2_t* pHeader)
 {
@@ -304,9 +312,9 @@ void DebugPrintHeader (cups_page_header2_t* pHeader)
 }
 
 // rearrange (compress) rows in pBuf, discarding tails of them
-unsigned compress_buffer(unsigned char *pBuf, unsigned iSize,
+static inline unsigned compress_buffer(unsigned char *pBuf, unsigned iSize,
                          unsigned int iWideStride, unsigned int iStride) {
-  unsigned char *pEnd = pBuf + iSize;
+  const unsigned char *pEnd = pBuf + iSize;
   unsigned char *pTarget = pBuf;
   while (pBuf < pEnd) {
     int iBytes = min(pEnd - pBuf, iStride);
@@ -318,13 +326,32 @@ unsigned compress_buffer(unsigned char *pBuf, unsigned iSize,
 }
 
 // returns -1 if whole line iz filled by zeros. Otherwise 0.
-int line_iz_empty(const unsigned char *pBuf, unsigned iSize) {
+static inline int line_is_empty(const unsigned char *pBuf, unsigned iSize) {
   int i;
   for (i = 0; i < iSize; ++i)
     if (pBuf[i])
       return 0;
   return -1;
 }
+
+static inline void send_raster(const unsigned char *pBuf, int width8,
+                               int height) {
+  if (!height)
+    return;
+  sendRasterHeader(width8, height);
+  outputarray((char *)pBuf, width8 * height);
+}
+
+#define EXITPRINT(CODE)                                                        \
+  {                                                                            \
+    if (pRasterSrc)                                                            \
+      cupsRasterClose(pRasterSrc);                                             \
+    if (pRasterBuf)                                                            \
+      free(pRasterBuf);                                                        \
+    if (fd)                                                                    \
+      close(fd);                                                               \
+    return (CODE);                                                             \
+  }
 
 //////////////////////////////////////////////
 //////////////////////////////////////////////
@@ -345,9 +372,6 @@ int main(int argc, char *argv[]) {
   }
 
   DEBUGSTARTPRINT();
-
-
-
   int iCurrentPage = 0;
   // CUPS Page tHeader
   cups_page_header2_t tHeader;
@@ -378,12 +402,8 @@ int main(int argc, char *argv[]) {
 
     if (!pRasterBuf) {
       pRasterBuf = malloc(tHeader.cupsBytesPerLine * 24);
-      if (!pRasterBuf) { // hope it never goes here...
-        cupsRasterClose(pRasterSrc);
-        if (fd)
-          close(fd);
-        return EXIT_FAILURE;
-      }
+      if (!pRasterBuf) // hope it never goes here...
+        EXITPRINT(EXIT_FAILURE)
     }
 
     fprintf(stderr, "PAGE: %d %d\n", ++iCurrentPage, tHeader.NumCopies);
@@ -415,71 +435,67 @@ int main(int argc, char *argv[]) {
       iRowsToPrint -= iBlockHeight;
       unsigned iBytesChunk = 0;
 
+      // first, fetch whole block from the image
       if (iBlockHeight)
         iBytesChunk = cupsRasterReadPixels(
             pRasterSrc, pRasterBuf, tHeader.cupsBytesPerLine * iBlockHeight);
 
-      if (iBytesChunk && width_bytes < tHeader.cupsBytesPerLine)
+      // if original image is wider - rearrange buffer so that our calculated
+      // lines come one-by-one without extra gaps
+      if (width_bytes < tHeader.cupsBytesPerLine)
         iBytesChunk = compress_buffer(pRasterBuf, iBytesChunk,
-                                      tHeader.cupsBytesPerLine, width_bytes );
+                                      tHeader.cupsBytesPerLine, width_bytes);
 
+      // runaround for sometimes truncated output of cupsRasterReadPixels
+      if (iBytesChunk < width_bytes * iBlockHeight) {
+        memset(pRasterBuf + iBytesChunk, 0,
+               width_bytes * iBlockHeight - iBytesChunk);
+        iBytesChunk = width_bytes * iBlockHeight;
+      }
+
+      // lazy output of current raster. First check current line if it is zero.
+      // if there were many zeroes and met non-zero - flush zeros by 'feed' cmd
+      // if opposite - send non-zero chunk as raster.
       unsigned char *pBuf = pRasterBuf;
       unsigned char *pChunk = pBuf;
-      unsigned char *pEnd = pBuf + iBytesChunk;
+      const unsigned char *pEnd = pBuf + iBytesChunk;
       int nonzerolines = 0;
-      for (; iBlockHeight; --iBlockHeight) {
-        if (line_iz_empty(pBuf, width_bytes))
-        {
-          if (nonzerolines) // time to flush
-        }
+      while ( pBuf<pEnd ) {
+        if (line_is_empty(pBuf, width_bytes)) {
+          if (nonzerolines) { // met zero, need to flush collected raster
+            send_raster(pChunk, width_bytes, nonzerolines);
+            nonzerolines = 0;
+          }
           ++zeroy;
-        else
+        } else {
+          if (zeroy) { // met non-zero, need to feed calculated num of zero lines
+            flushLines(zeroy);
+            zeroy=0;
+          }
+          if (!nonzerolines)
+            pChunk = pBuf;
           ++nonzerolines;
+        }
+        pBuf += width_bytes;
       }
-
-
-      DEBUGPRINT("Read %d lines\n", j);
-        if (j < iBlockHeight) // wtf?
-          continue;
-      }
-      int rest_bytes = iBlockHeight * width_bytes;
-      int j;
-      for (j = 0; j < rest_bytes; ++j)
-        if (pRasterBuf[j])
-          break;
-
-      DEBUGPRINT("Checked %d bytes of %d for zero\n", j, rest_bytes);
-
-      if (j >= rest_bytes) { // true, if whole block iz zeroes
-        ++zeroy;
-        continue;
-      }
-
-      for (; zeroy > 0; --zeroy)
-        flushAndFeed();
-
-      sendRasterHeader(width_bytes, iBlockHeight);
-      outputarray((char *)pRasterBuf, rest_bytes);
+      send_raster(pChunk, width_bytes, nonzerolines);
       flushBuffer();
-    }
+    } // loop over page
 
+    // page is finished.
+    // m.b. we have to print empty tail at the end
     if (settings.blankSpace)
-      for (; zeroy > 0; --zeroy)
-        flushAndFeed();
+      flushManyLines (zeroy);
 
+    flushManyLines(settings.feedDist * 24);
     finishPage();
   }
 
   finalizeJob();
-  if (pRasterBuf)
-    free(pRasterBuf);
-  cupsRasterClose(pRasterSrc);
-  if (fd)
-    close(fd);
   fputs(iCurrentPage ? "INFO: Ready to print.\n" : "ERROR: No pages found!\n",
         stderr);
   DEBUGFINISHPRINT();
-  return iCurrentPage ? EXIT_SUCCESS : EXIT_FAILURE;
+  EXITPRINT(iCurrentPage ? EXIT_SUCCESS : EXIT_FAILURE)
 }
 
 // end of rastertozj.c

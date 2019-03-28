@@ -80,7 +80,7 @@ if ( APPLE )
 	# this line sets correct target permissions, due to CUPS requirements
 	# However as a side effect you'll need either fakeroot, either sudo to even perform 'make package' because of it.
 	install ( CODE "EXECUTE_PROCESS(COMMAND chown ${OWNER} \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${FILTERPATH}/rastertozj\")" )
-	install ( FILES ${PPDS} "${PPDPATH}" )
+	install ( FILES ${PPDS} DESTINATION "${PPDPATH}" )
 	#	install ( CODE "EXECUTE_PROCESS(COMMAND /etc/init.d/cups start)" )
 elseif ( UNIX )
 	set ( FILTERPATH "usr/lib/cups/filter" )
