@@ -34,6 +34,13 @@ if ( CMAKE_BUILD_TYPE STREQUAL "Debug" )
 	endif ()
 endif ()
 
+# experimental rastering
+SET ( RASTER_TYPE Old CACHE STRING "Flavor how to output the raster images" )
+set_property ( CACHE RASTER_TYPE PROPERTY STRINGS "Old" "New" )
+if ( RASTER_TYPE STREQUAL "New" )
+	target_compile_definitions ( rastertozj PRIVATE NEWRASTER )
+endif()
+
 # build ppds
 if ( NOT DEFINED PPDC )
 	find_program ( PPDC ppdc )

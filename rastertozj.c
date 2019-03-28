@@ -340,10 +340,37 @@ static inline void send_raster(const unsigned char *pBuf, int width8,
                                int height) {
   if (!height)
     return;
-  DEBUGPRINT("Raster block %dx%d pixels\n", width8*8, height);
+  DEBUGPRINT("Raster block %dx%d pixels\n", width8 * 8, height);
+
+#ifdef NEWRASTER
+  // experimental - output raster according to new ESC/POS specification,
+  // using graphic function.
+  // It may work with kind of epson, but zijiang fails, oops...
+  // download raster - function 112
+  SendCommand("\x1d(L"); // GS ( L
+  mputnum(width8 * height + 10); // pL, pH
+  mputchar ('0'); // m=48
+  mputchar (112); // fn
+  mputchar ('0'); // monochrome digital
+  mputchar ('\1'); // bx
+  mputchar ('\1'); // by
+  mputchar ('1'); // с (color)= 1
+  mputnum(width8*8); // xL, xH
+  mputnum(height); // yL, yH
+
+  outputarray((char *)pBuf, width8 * height);
+
+  // print raster - function 50
+  SendCommand("\x1d(L");
+  mputnum (2); // pL, pH
+  mputchar (48); // m
+  mputchar (50); // function = 50
+
+#else
   sendRasterHeader(width8, height);
   outputarray((char *)pBuf, width8 * height);
   flushBuffer();
+#endif
 }
 
 #define EXITPRINT(CODE)                                                        \
