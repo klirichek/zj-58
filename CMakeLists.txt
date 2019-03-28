@@ -42,9 +42,12 @@ mark_as_advanced( PPDC )
 
 set ( PPDS "" )
 if ( PPDC )
-	set ( DRVSRC "${CMAKE_CURRENT_SOURCE_DIR}/zj-58.drv")
+	set ( DRVSRC "${CMAKE_CURRENT_SOURCE_DIR}/zjdrv.drv")
 	set ( PPDDIR "${CMAKE_CURRENT_BINARY_DIR}/ppd" )
-	list (APPEND PPDS "${PPDDIR}/zj58.ppd")
+	list (APPEND PPDS "${PPDDIR}/zj58.ppd" )
+	list (APPEND PPDS "${PPDDIR}/xp58.ppd" )
+	list (APPEND PPDS "${PPDDIR}/tm20.ppd" )
+	list (APPEND PPDS "${PPDDIR}/zj80.ppd" )
 	ADD_CUSTOM_COMMAND ( OUTPUT ${PPDS}
 			COMMAND LANG=c ${PPDC} ${DRVSRC}
 			MAIN_DEPENDENCY ${DRVSRC}
@@ -54,7 +57,9 @@ if ( PPDC )
 			)
 	ADD_CUSTOM_TARGET ( ppds ALL DEPENDS ${PPDS} )
 else()
-	list (APPEND PPDS "${CMAKE_CURRENT_SOURCE_DIR}/ZJ-58.ppd")
+	message (STATUS "No ppdc found; fall back to defaultly shipped ZJ-58.ppd")
+	list ( APPEND PPDS "${CMAKE_CURRENT_SOURCE_DIR}/zj58.ppd" )
+	list ( APPEND PPDS "${CMAKE_CURRENT_SOURCE_DIR}/zj80.ppd" )
 endif()
 
 # installation stuff
@@ -73,15 +78,13 @@ if ( APPLE )
 	set ( FILTERPATH "usr/libexec/cups/filter" )
 	set ( PPDPATH "Library/Printers/PPDs/Contents/Resources")
 	set ( OWNER "root:wheel")
-	#install ( CODE "EXECUTE_PROCESS(COMMAND /etc/init.d/cups stop)" )
-		# /private/etc/cups stop
-		# sudo launchctl stop org.cups.cupsd
+	install ( CODE "EXECUTE_PROCESS(COMMAND sudo launchctl stop org.cups.cupsd)" )
 	install ( TARGETS rastertozj DESTINATION ${FILTERPATH} )
 	# this line sets correct target permissions, due to CUPS requirements
 	# However as a side effect you'll need either fakeroot, either sudo to even perform 'make package' because of it.
 	install ( CODE "EXECUTE_PROCESS(COMMAND chown ${OWNER} \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${FILTERPATH}/rastertozj\")" )
 	install ( FILES ${PPDS} DESTINATION "${PPDPATH}" )
-	#	install ( CODE "EXECUTE_PROCESS(COMMAND /etc/init.d/cups start)" )
+	install ( CODE "EXECUTE_PROCESS(COMMAND sudo launchctl start org.cups.cupsd)" )
 elseif ( UNIX )
 	set ( FILTERPATH "usr/lib/cups/filter" )
 	set ( PPDPATH "usr/share/cups/model/zjiang/" )

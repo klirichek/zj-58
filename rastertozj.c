@@ -3,7 +3,6 @@
 #include <cups/cups.h>
 #include <cups/ppd.h>
 #include <cups/raster.h>
-#include <cups/sidechannel.h>
 #include <fcntl.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -20,47 +19,42 @@ static inline int min(int a, int b) {
 
 // settings and their stuff
 struct settings_ {
-  int cashDrawer1;
-  int cashDrawer2;
-  int blankSpace;
-  int feedDist;
-  int modelNum;
+  int modelNum; // the only setting we get from PPD.
+  unsigned CashDrawer1;
+  unsigned CashDrawer2;
+  unsigned CashDrawer1On;
+  unsigned CashDrawer1Off;
+  unsigned CashDrawer2On;
+  unsigned CashDrawer2Off;
+  cups_bool_t InsertSheet;
+  cups_adv_t AdvanceMedia;
+  cups_cut_t CutMedia;
+  unsigned int AdvanceDistance;
 };
 struct settings_ settings;
 
-// get an option
-static inline int getOptionChoiceIndex(const char *sChoiceName,
-                                       ppd_file_t *pPpd) {
-  ppd_choice_t *pChoice = ppdFindMarkedChoice(pPpd, sChoiceName);
-  if (!pChoice) {
-    ppd_option_t *pOption = ppdFindOption(pPpd, sChoiceName);
-    if (pOption)
-      pChoice = ppdFindChoice(pOption, pOption->defchoice);
-  }
-  return pChoice ? atoi(pChoice->choice) : -1;
-}
-
 static void initializeSettings(char *commandLineOptionSettings, struct settings_ *pSettings) {
   ppd_file_t *pPpd = ppdOpenFile(getenv("PPD"));
-  ppdMarkDefaults(pPpd);
-
   // char* sDestination = getenv("DestinationPrinterID");
-
-  cups_option_t *pOptions = NULL;
-  int iNumOptions = cupsParseOptions(commandLineOptionSettings, 0, &pOptions);
-  if (iNumOptions && pOptions) {
-    cupsMarkOptions(pPpd, iNumOptions, pOptions);
-    cupsFreeOptions(iNumOptions, pOptions);
-  }
-
   memset(pSettings, 0, sizeof(struct settings_));
-  pSettings->cashDrawer1 = getOptionChoiceIndex("CashDrawer1Setting", pPpd);
-  pSettings->cashDrawer2 = getOptionChoiceIndex("CashDrawer2Setting", pPpd);
-  pSettings->blankSpace = getOptionChoiceIndex("BlankSpace", pPpd);
-  pSettings->feedDist = getOptionChoiceIndex("FeedDist", pPpd);
   pSettings->modelNum = pPpd->model_number;
-
   ppdClose(pPpd);
+}
+
+static void update_settings_from_job (cups_page_header2_t * pHeader)
+{
+  if (!pHeader)
+    return;
+  settings.CashDrawer1 = pHeader->cupsInteger[0];
+  settings.CashDrawer2 = pHeader->cupsInteger[1];
+  settings.CashDrawer1On = pHeader->cupsInteger[2];
+  settings.CashDrawer1Off = pHeader->cupsInteger[3];
+  settings.CashDrawer2On = pHeader->cupsInteger[4];
+  settings.CashDrawer2Off = pHeader->cupsInteger[5];
+  settings.InsertSheet = pHeader->cupsInteger[6];
+  settings.AdvanceMedia = pHeader->AdvanceMedia;
+  settings.CutMedia = pHeader->CutMedia;
+  settings.AdvanceDistance = pHeader->AdvanceDistance;
 }
 
 #ifndef DEBUGP
@@ -128,17 +122,11 @@ static inline void mputnum(unsigned int val) {
  * esc '8' - wait{4, cutter also (char[4]){29,'V','A',20}}; GS V 'A' 20
  */
 
-/* todo:
- * generate pulse by esc p 0/ esc p 1/
- * XPrinter 58
- */
-
 // define printer initialize command
 static const char escInit[] = "\x1b@";
 
 // define cashDrawerEjector command
-static const char escCashDrawer1Eject[] = "\x1bp\0@P";
-static const char escCashDrawer2Eject[] = "\x1bp\1@P";
+static const char escCashDrawerEject[] = "\x1bp";
 
 // define raster mode start command
 static const char escRasterMode[] = "\x1dv0\0";
@@ -147,9 +135,8 @@ static const char escRasterMode[] = "\x1dv0\0";
 static const char escFlush[] = "\x1bJ";
 
 // define cut command
-static const char escCut[] = "\x1bi";
-
-static const char getStatus[] = "\x10\x04\x04";
+//static const char escCut[] = "\x1bi";
+static const char escCut[] = "\x1dV\1";
 
 // enter raster mode and set up x and y dimensions
 static inline void sendRasterHeader(int xsize, int ysize) {
@@ -173,6 +160,7 @@ static inline void flushBuffer() {
 // flush, then feed 24 lines
 static inline void flushManyLines(int iLines)
 {
+  DEBUGPRINT("Skip %d empty lines: ", iLines);
   while ( iLines )
   {
     int iStride = min (iLines, 24);
@@ -181,21 +169,35 @@ static inline void flushManyLines(int iLines)
   }
 }
 
+inline static void CashDrawerEject (unsigned iDrawer, unsigned iOn,
+                                   unsigned iOff)
+{
+  SendCommand(escCashDrawerEject);
+  mputchar(iDrawer);
+  mputchar(iOn);
+  mputchar(iOff);
+}
+
+inline static void cutMedia()
+{
+  SendCommand(escCut);
+}
+
 // sent on the beginning of print job
 void setupJob() {
   SendCommand(escInit);
-  if (settings.cashDrawer1 == 1)
-    SendCommand(escCashDrawer1Eject);
-  if (settings.cashDrawer2 == 1)
-    SendCommand(escCashDrawer2Eject);
+  if (settings.CashDrawer1 == 1)
+    CashDrawerEject(0,settings.CashDrawer1On,settings.CashDrawer1Off);
+  if (settings.CashDrawer2 == 1)
+    CashDrawerEject(1, settings.CashDrawer2On, settings.CashDrawer2Off);
 }
 
 // sent at the very end of print job
 void finalizeJob() {
-  if (settings.cashDrawer1 == 2)
-    SendCommand(escCashDrawer1Eject);
-  if (settings.cashDrawer2 == 2)
-    SendCommand(escCashDrawer2Eject);
+  if (settings.CashDrawer1 == 2)
+    CashDrawerEject(0, settings.CashDrawer1On, settings.CashDrawer1Off);
+  if (settings.CashDrawer2 == 2)
+    CashDrawerEject(1, settings.CashDrawer2On, settings.CashDrawer2Off);
 //  SendCommand(escInit);
 }
 
@@ -338,8 +340,10 @@ static inline void send_raster(const unsigned char *pBuf, int width8,
                                int height) {
   if (!height)
     return;
+  DEBUGPRINT("Raster block %dx%d pixels\n", width8*8, height);
   sendRasterHeader(width8, height);
   outputarray((char *)pBuf, width8 * height);
+  flushBuffer();
 }
 
 #define EXITPRINT(CODE)                                                        \
@@ -383,20 +387,25 @@ int main(int argc, char *argv[]) {
   DEBUGPRINT("ModelNumber from PPD '%d'\n", settings.modelNum);
 
   // set max num of pixels per line depended from model number (from ppd)
-  int iMaxWidth;
-  switch ( settings.modelNum )
-  {
-  case 80: iMaxWidth = 0x240; break;
-  case 58: iMaxWidth = 0x180; break;
-  default: iMaxWidth = 0x180; break;
-  }
+  int iMaxWidth = settings.modelNum;
+  if (!iMaxWidth)
+    iMaxWidth = 0x240;
 
-  setupJob();
+  // postpone start of the job until we parse first header and get necessary values from there.
+  int iJobStarted = 0;
 
   // loop over the whole raster, page by page
   while (cupsRasterReadHeader2(pRasterSrc, &tHeader)) {
     if ((!tHeader.cupsHeight) || (!tHeader.cupsBytesPerLine))
       break;
+
+    update_settings_from_job( &tHeader );
+
+    if (!iJobStarted)
+    {
+      setupJob();
+      iJobStarted = 1;
+    }
 
     DebugPrintHeader ( &tHeader );
 
@@ -429,7 +438,7 @@ int main(int argc, char *argv[]) {
 
       int iBlockHeight = min(iRowsToPrint, 24);
 
-      DEBUGPRINT("Processing block of %d, starting from %d lines\n",
+      DEBUGPRINT("--------Processing block of %d, starting from %d lines",
                  iBlockHeight, tHeader.cupsHeight - iRowsToPrint);
 
       iRowsToPrint -= iBlockHeight;
@@ -440,14 +449,23 @@ int main(int argc, char *argv[]) {
         iBytesChunk = cupsRasterReadPixels(
             pRasterSrc, pRasterBuf, tHeader.cupsBytesPerLine * iBlockHeight);
 
+      DEBUGPRINT("--------Got %d from %d requested bytes",
+                 iBytesChunk,
+                 tHeader.cupsBytesPerLine *
+                     iBlockHeight);
+
       // if original image is wider - rearrange buffer so that our calculated
       // lines come one-by-one without extra gaps
-      if (width_bytes < tHeader.cupsBytesPerLine)
+      if (width_bytes < tHeader.cupsBytesPerLine) {
+        DEBUGPRINT("--------Compress line from %d to %d bytes", tHeader.cupsBytesPerLine, width_bytes);
         iBytesChunk = compress_buffer(pRasterBuf, iBytesChunk,
                                       tHeader.cupsBytesPerLine, width_bytes);
+      }
 
       // runaround for sometimes truncated output of cupsRasterReadPixels
       if (iBytesChunk < width_bytes * iBlockHeight) {
+        DEBUGPRINT("--------Restore truncated gap of %d bytes",
+                   width_bytes * iBlockHeight - iBytesChunk);
         memset(pRasterBuf + iBytesChunk, 0,
                width_bytes * iBlockHeight - iBytesChunk);
         iBytesChunk = width_bytes * iBlockHeight;
@@ -469,7 +487,7 @@ int main(int argc, char *argv[]) {
           ++zeroy;
         } else {
           if (zeroy) { // met non-zero, need to feed calculated num of zero lines
-            flushLines(zeroy);
+            flushManyLines(zeroy);
             zeroy=0;
           }
           if (!nonzerolines)
@@ -479,17 +497,28 @@ int main(int argc, char *argv[]) {
         pBuf += width_bytes;
       }
       send_raster(pChunk, width_bytes, nonzerolines);
-      flushBuffer();
+      //flushBuffer();
     } // loop over page
 
     // page is finished.
     // m.b. we have to print empty tail at the end
-    if (settings.blankSpace)
+    if (settings.InsertSheet)
       flushManyLines (zeroy);
 
-    flushManyLines(settings.feedDist * 24);
+    if (settings.AdvanceMedia == CUPS_ADVANCE_PAGE)
+      flushManyLines(settings.AdvanceDistance);
+
+    if (settings.CutMedia == CUPS_CUT_PAGE)
+      cutMedia();
+
     finishPage();
-  }
+  } // loop over all pages pages
+
+  if (settings.AdvanceMedia==CUPS_ADVANCE_JOB)
+    flushManyLines(settings.AdvanceDistance);
+
+  if (settings.CutMedia == CUPS_CUT_JOB)
+    cutMedia();
 
   finalizeJob();
   fputs(iCurrentPage ? "INFO: Ready to print.\n" : "ERROR: No pages found!\n",
