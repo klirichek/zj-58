@@ -1,15 +1,53 @@
-zj-58
+CUPS driver for thermal receipt printers (was: zj-58)
+=====================================================
+
+CUPS filter for thermal receipt printers for rolls 58 and 80mm.
+
+Originally it was filter for Zijiang zj-58 with specific PPD,
+but later it is revealed that it actually works with many other cheap 58mm printers, like
+Xprinter XP-58, etc. Also support for 80mm printers added.
+
+Printing is performed from cups-raster using ESC/POS sequence 'GS v 0 <x> <y>'.
+Empty (zero) lines feeded as 'feed' command (to avoid send empty raster).
+
+Also 2 Cash Drawers supported, with tunable impulse length for 'on' and 'off.'
+
+Build
 =====
 
-CUPS filter for thermal printer Zjiang ZJ-58
+You need toolchain, CMake and cups-devel.
 
-The linux driver provided on Zjiang site unfortunately doesn't work.
-First, it is 32-bit binary (and so, on x64 system need some x86 libs to be installed).
-Second, it's PPD is not correct - it just doesn't show any advanced settings because of it.
-Finally, raster filter just crashes on any try to run it!
-But even if you run it, you'll see that it's working with printer is not optimal: for example, if it sees a blank line, it will send the blank raster to print (instead of just use 'feeding' command, which is definitely faster!)
+It may be achieved, say (as example) by running
+```
+sudo apt install build-essential cmake libcups2-dev libcupsimage2-dev
+```
 
-This is the solution:
-PPD is fixed and works.
-Filter is provided as src (you can found a list of packages need to be installed in order to build it in the header of source).
-Also, printing of blank lines is optimized.
+After it the filter could be built by the sequence of commands:
+
+```
+  mkdir build && cd build && cmake ..
+  make
+```
+
+
+Installation
+============
+
+Need administrative rights!
+
+```
+  sudo make install
+```
+
+'Sudo' is necessary to stop/restart cups service before operation, and also to place files with necessary rights.
+
+
+Debian packaging
+================
+
+For simplicity done with the same script as installation, so also need adminstrative rights.
+```
+  sudo cpack -G DEB
+```
+
+That will stop/start cups as a side effect, however that is not critical.

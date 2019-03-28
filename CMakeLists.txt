@@ -1,4 +1,4 @@
-cmake_minimum_required ( VERSION 3.12 )
+cmake_minimum_required ( VERSION 3.0 )
 
 # set default build type to Release (if nothing else provided from outside yet)
 IF ( NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES )
@@ -9,27 +9,29 @@ ENDIF ()
 
 project ( rastertozj C )
 
-#set ( CMAKE_INSTALL_PREFIX "/usr" CACHE FILEPATH "force install to /usr" FORCE )
-
 function( DIAG VARR )
 	message ( STATUS "${VARR} -> ${${VARR}}" )
 endfunction()
 
-# build the filter binary
+# requirements to build the filter binary
 find_package ( Cups REQUIRED )
 find_library ( CUPSIMAGELIB NAMES cupsimage )
 mark_as_advanced ( CUPSIMAGELIB )
-
-set ( DEBUGFILE "/tmp/debugraster.txt" CACHE STRING "File where to make debug output if DEBUGP is set" )
-option ( DEBUGP "Whetner to output debug info" ON )
 
 add_executable ( rastertozj rastertozj.c )
 target_compile_options ( rastertozj PRIVATE -Wall -fPIC )
 target_include_directories ( rastertozj PRIVATE ${CUPS_INCLUDE_DIR} )
 target_link_libraries ( rastertozj PRIVATE ${CUPS_LIBRARIES} ${CUPSIMAGELIB} )
 
-if ( DEBUGP )
-	target_compile_definitions ( rastertozj PRIVATE DEBUGP DEBUGFILE="${DEBUGFILE}")
+if ( CMAKE_BUILD_TYPE STREQUAL "Debug" )
+	target_compile_definitions ( rastertozj PRIVATE DEBUGP )
+	if ( APPLE )
+		target_compile_definitions ( rastertozj PRIVATE SAFEDEBUG )
+		message ( STATUS "On Mac OSX log is saved in sandbox, as /private/var/spool/cups/tmp" )
+	elseif ( UNIX )
+		set ( DEBUGFILE "/tmp/debugraster.txt" CACHE STRING "File where to make debug output if we build ad Debug" )
+		target_compile_definitions ( rastertozj PRIVATE DEBUGFILE="${DEBUGFILE}" )
+	endif ()
 endif ()
 
 # build ppds
@@ -38,37 +40,63 @@ if ( NOT DEFINED PPDC )
 endif ()
 mark_as_advanced( PPDC )
 
+set ( PPDS "" )
 if ( PPDC )
-	set ( ENV{LANG} c )
-	execute_process (
-			COMMAND "${PPDC}" -d "${CMAKE_CURRENT_BINARY_DIR}" "zj-58.drv"
-			WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-			RESULT_VARIABLE res
-			OUTPUT_VARIABLE _CONTENT
-			ERROR_QUIET
-			OUTPUT_STRIP_TRAILING_WHITESPACE )
+	set ( DRVSRC "${CMAKE_CURRENT_SOURCE_DIR}/zjdrv.drv")
+	set ( PPDDIR "${CMAKE_CURRENT_BINARY_DIR}/ppd" )
+	list (APPEND PPDS "${PPDDIR}/zj58.ppd" )
+	list (APPEND PPDS "${PPDDIR}/xp58.ppd" )
+	list (APPEND PPDS "${PPDDIR}/tm20.ppd" )
+	list (APPEND PPDS "${PPDDIR}/zj80.ppd" )
+	ADD_CUSTOM_COMMAND ( OUTPUT ${PPDS}
+			COMMAND LANG=c ${PPDC} ${DRVSRC}
+			MAIN_DEPENDENCY ${DRVSRC}
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+			COMMENT "Building PPDs"
+			VERBATIM
+			)
+	ADD_CUSTOM_TARGET ( ppds ALL DEPENDS ${PPDS} )
+else()
+	message (STATUS "No ppdc found; fall back to defaultly shipped ZJ-58.ppd")
+	list ( APPEND PPDS "${CMAKE_CURRENT_SOURCE_DIR}/zj58.ppd" )
+	list ( APPEND PPDS "${CMAKE_CURRENT_SOURCE_DIR}/zj80.ppd" )
 endif()
 
 # installation stuff
 
-# this one works if you perform 'make install'
-set ( CMAKE_INSTALL_PREFIX "/usr" CACHE FILEPATH "this is forced to /usr" FORCE )
-
-# this one works if you perform 'make package' - it is kind of root for all packaging
+# Set both installation prefixes to /
+set ( CMAKE_INSTALL_PREFIX "/" CACHE FILEPATH "this is forced to /" FORCE )
 set ( CPACK_PACKAGING_INSTALL_PREFIX "/" )
+set ( CPACK_PACKAGE_CONTACT "Alexey N. Vinogradov (a.n.vinogradov@gmail.com)" )
 
-
-include ( GNUInstallDirs )
+set ( CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON )
+set ( CPACK_DEBIAN_PACKAGE_PREDEPENDS "libcups2-dev, libcupsimage2-dev" )
+set ( CPACK_DEBIAN_PACKAGE_SECTION "libs" )
+set ( CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/klirichek/zj-58")
 
 if ( APPLE )
 	set ( FILTERPATH "usr/libexec/cups/filter" )
 	set ( PPDPATH "Library/Printers/PPDs/Contents/Resources")
+	set ( OWNER "root:wheel")
+	install ( CODE "EXECUTE_PROCESS(COMMAND sudo launchctl stop org.cups.cupsd)" )
+	install ( TARGETS rastertozj DESTINATION ${FILTERPATH} )
+	# this line sets correct target permissions, due to CUPS requirements
+	# However as a side effect you'll need either fakeroot, either sudo to even perform 'make package' because of it.
+	install ( CODE "EXECUTE_PROCESS(COMMAND chown ${OWNER} \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${FILTERPATH}/rastertozj\")" )
+	install ( FILES ${PPDS} DESTINATION "${PPDPATH}" )
+	install ( CODE "EXECUTE_PROCESS(COMMAND sudo launchctl start org.cups.cupsd)" )
 elseif ( UNIX )
 	set ( FILTERPATH "usr/lib/cups/filter" )
 	set ( PPDPATH "usr/share/cups/model/zjiang/" )
+	set ( OWNER "root:root")
+	install ( CODE "EXECUTE_PROCESS(COMMAND /etc/init.d/cups stop)" )
+	install ( TARGETS rastertozj DESTINATION ${FILTERPATH} )
+	# this line sets correct target permissions, due to CUPS requirements
+	# However as a side effect you'll need either fakeroot, either sudo to even perform 'make package' because of it.
+	install ( CODE "EXECUTE_PROCESS(COMMAND chown ${OWNER} \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${FILTERPATH}/rastertozj\")" )
+	install ( FILES ${PPDS} DESTINATION "${PPDPATH}" )
+	install ( CODE "EXECUTE_PROCESS(COMMAND /etc/init.d/cups start)" )
 endif()
 
-install ( TARGETS rastertozj DESTINATION ${FILTERPATH} )
-install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/zj58.ppd DESTINATION "${PPDPATH}" )
 include (CPack)
 

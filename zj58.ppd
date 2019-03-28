@@ -1,0 +1,212 @@
+*PPD-Adobe: "4.3"
+*%%%% PPD file for ZJ-58 with CUPS.
+*%%%% Created by the CUPS PPD Compiler CUPS v2.2.7.
+*FormatVersion: "4.3"
+*FileVersion: "1.2"
+*LanguageVersion: English
+*LanguageEncoding: ISOLatin1
+*PCFileName: "zj58.ppd"
+*Product: "(zj-58)"
+*Manufacturer: "Zijiang"
+*ModelName: "Zijiang ZJ-58"
+*ShortNickName: "ZJ-58"
+*NickName: "Zijiang ZJ-58"
+*PSVersion: "(3010.000) 550"
+*LanguageLevel: "3"
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*FileSystem: False
+*Throughput: "1"
+*LandscapeOrientation: Plus90
+*TTRasterizer: Type42
+*% Driver-defined attributes...
+*VariablePaperSize: True
+*1284DeviceID: "MFG:Zijiang;CMD:Zijiang;MDL:ZJ-58;CLS:PRINTER;"
+*cupsVersion: 2.2
+*cupsModelNumber: 384
+*cupsManualCopies: True
+*cupsFilter: "application/vnd.cups-raster 100 rastertozj"
+*cupsLanguages: "en"
+*UIConstraints: *CashDrawer1Setting *OptionCash1 False
+*UIConstraints: *OptionCash1 False *CashDrawer1Setting
+*UIConstraints: *CashDrawer2Setting *OptionCash2 False
+*UIConstraints: *OptionCash2 False *CashDrawer2Setting
+*UIConstraints: *CutMedia *OptionCutter False
+*UIConstraints: *OptionCutter False *CutMedia
+*OpenUI *PageSize/Media Size: PickOne
+*OrderDependency: 10 AnySetup *PageSize
+*DefaultPageSize: X48MMY65MM
+*PageSize X48MMY65MM/58mm x 65mm: "<</PageSize[164 182]>>setpagedevice"
+*PageSize X48MMY105MM/58mm x 105mm: "<</PageSize[164 298]>>setpagedevice"
+*PageSize X48MMY210MM/58mm x 210mm: "<</PageSize[164 595]>>setpagedevice"
+*PageSize X48MMY297MM/58mm x 297mm: "<</PageSize[164 842]>>setpagedevice"
+*PageSize X48MMY3276MM/58mm x 3276mm: "<</PageSize[164 9286]>>setpagedevice"
+*CloseUI: *PageSize
+*OpenUI *PageRegion/Media Size: PickOne
+*OrderDependency: 10 AnySetup *PageRegion
+*DefaultPageRegion: X48MMY65MM
+*PageRegion X48MMY65MM/58mm x 65mm: "<</PageSize[164 182]>>setpagedevice"
+*PageRegion X48MMY105MM/58mm x 105mm: "<</PageSize[164 298]>>setpagedevice"
+*PageRegion X48MMY210MM/58mm x 210mm: "<</PageSize[164 595]>>setpagedevice"
+*PageRegion X48MMY297MM/58mm x 297mm: "<</PageSize[164 842]>>setpagedevice"
+*PageRegion X48MMY3276MM/58mm x 3276mm: "<</PageSize[164 9286]>>setpagedevice"
+*CloseUI: *PageRegion
+*DefaultImageableArea: X48MMY65MM
+*ImageableArea X48MMY65MM/58mm x 65mm: "14 0 150 182"
+*ImageableArea X48MMY105MM/58mm x 105mm: "14 0 150 298"
+*ImageableArea X48MMY210MM/58mm x 210mm: "14 0 150 595"
+*ImageableArea X48MMY297MM/58mm x 297mm: "14 0 150 842"
+*ImageableArea X48MMY3276MM/58mm x 3276mm: "14 0 150 9286"
+*DefaultPaperDimension: X48MMY65MM
+*PaperDimension X48MMY65MM/58mm x 65mm: "164 182"
+*PaperDimension X48MMY105MM/58mm x 105mm: "164 298"
+*PaperDimension X48MMY210MM/58mm x 210mm: "164 595"
+*PaperDimension X48MMY297MM/58mm x 297mm: "164 842"
+*PaperDimension X48MMY3276MM/58mm x 3276mm: "164 9286"
+*MaxMediaWidth: "164"
+*MaxMediaHeight: "9286"
+*HWMargins: 14 0 14 0
+*CustomPageSize True: "pop pop pop <</PageSize[5 -2 roll]/ImagingBBox null>>setpagedevice"
+*ParamCustomPageSize Width: 1 points 164 164
+*ParamCustomPageSize Height: 2 points 56 9286
+*ParamCustomPageSize WidthOffset: 3 points 0 0
+*ParamCustomPageSize HeightOffset: 4 points 0 0
+*ParamCustomPageSize Orientation: 5 int 0 0
+*OpenUI *CutMedia/Cut Media: PickOne
+*OrderDependency: 10 AnySetup *CutMedia
+*DefaultCutMedia: None
+*CutMedia None/No cutting: "<</CutMedia 0>>setpagedevice"
+*CutMedia EndOfPage/Cut at every page: "<</CutMedia 4>>setpagedevice"
+*CutMedia EndOfJob/Cut at every job: "<</CutMedia 2>>setpagedevice"
+*CloseUI: *CutMedia
+*OpenGroup: InstallableOptions/Installable Options
+*OpenUI *OptionCash1/Cash drawer 1: Boolean
+*OrderDependency: 10 AnySetup *OptionCash1
+*DefaultOptionCash1: False
+*OptionCash1 False/Not Installed: ""
+*OptionCash1 True/Installed: ""
+*CloseUI: *OptionCash1
+*OpenUI *OptionCash2/Cash drawer 2: Boolean
+*OrderDependency: 10 AnySetup *OptionCash2
+*DefaultOptionCash2: False
+*OptionCash2 False/Not Installed: ""
+*OptionCash2 True/Installed: ""
+*CloseUI: *OptionCash2
+*OpenUI *OptionCutter/Cutter: Boolean
+*OrderDependency: 10 AnySetup *OptionCutter
+*DefaultOptionCutter: False
+*OptionCutter False/Not Installed: ""
+*OptionCutter True/Installed: ""
+*CloseUI: *OptionCutter
+*CloseGroup: InstallableOptions
+*OpenGroup: BlankGroup/Blank Options
+*OpenUI *FeedDist/Feed distance: PickOne
+*OrderDependency: 10 AnySetup *FeedDist
+*DefaultFeedDist: 2feed9mm
+*FeedDist 0feed3mm/3mm: "<</AdvanceDistance 24>>setpagedevice"
+*FeedDist 1feed6mm/6mm: "<</AdvanceDistance 48>>setpagedevice"
+*FeedDist 2feed9mm/9mm: "<</AdvanceDistance 72>>setpagedevice"
+*FeedDist 3feed12mm/12mm: "<</AdvanceDistance 96>>setpagedevice"
+*FeedDist 4feed15mm/15mm: "<</AdvanceDistance 120>>setpagedevice"
+*FeedDist 5feed18mm/18mm: "<</AdvanceDistance 144>>setpagedevice"
+*FeedDist 6feed21mm/21mm: "<</AdvanceDistance 168>>setpagedevice"
+*FeedDist 7feed24mm/24mm: "<</AdvanceDistance 192>>setpagedevice"
+*FeedDist 8feed27mm/27mm: "<</AdvanceDistance 216>>setpagedevice"
+*FeedDist 9feed30mm/30mm: "<</AdvanceDistance 240>>setpagedevice"
+*FeedDist 10feed33mm/33mm: "<</AdvanceDistance 264>>setpagedevice"
+*FeedDist 11feed36mm/36mm: "<</AdvanceDistance 288>>setpagedevice"
+*FeedDist 12feed39mm/39mm: "<</AdvanceDistance 312>>setpagedevice"
+*FeedDist 13feed42mm/42mm: "<</AdvanceDistance 336>>setpagedevice"
+*FeedDist 14feed45mm/45mm: "<</AdvanceDistance 360>>setpagedevice"
+*CloseUI: *FeedDist
+*OpenUI *FeedWhere/When to feed: PickOne
+*OrderDependency: 10 AnySetup *FeedWhere
+*DefaultFeedWhere: AfterJob
+*FeedWhere None/Never: ""
+*FeedWhere AfterPage/After each page: "<</AdvanceMedia 4>>setpagedevice"
+*FeedWhere AfterJob/After whole printing: "<</AdvanceMedia 2>>setpagedevice"
+*CloseUI: *FeedWhere
+*OpenUI *BlankSpace/Blank space at page's end: Boolean
+*OrderDependency: 10 AnySetup *BlankSpace
+*DefaultBlankSpace: False
+*BlankSpace True/Print: "<</cupsInteger6 1>>setpagedevice"
+*BlankSpace False/None: "<</cupsInteger6 0>>setpagedevice"
+*CloseUI: *BlankSpace
+*CloseGroup: BlankGroup
+*OpenGroup: *CashDrawerGroup/Cash Drawer Control
+*OpenUI *CashDrawer1Setting/Cash Drawer 1: PickOne
+*OrderDependency: 10 DocumentSetup *CashDrawer1Setting
+*DefaultCashDrawer1Setting: None
+*CashDrawer1Setting None/None: "<</cupsInteger0 0>>setpagedevice"
+*CashDrawer1Setting 1BeforePrinting/Before Printing: "<</cupsInteger0 1>>setpagedevice"
+*CashDrawer1Setting 1AfterPrinting/After Printing: "<</cupsInteger0 2>>setpagedevice"
+*CloseUI: *CashDrawer1Setting
+*OpenUI *CashDrawer2Setting/Cash Drawer 2: PickOne
+*OrderDependency: 10 DocumentSetup *CashDrawer2Setting
+*DefaultCashDrawer2Setting: None
+*CashDrawer2Setting None/None: "<</cupsInteger1 0>>setpagedevice"
+*CashDrawer2Setting 2BeforePrinting/Before Printing: "<</cupsInteger1 1>>setpagedevice"
+*CashDrawer2Setting 2AfterPrinting/After Printing: "<</cupsInteger1 2>>setpagedevice"
+*CloseUI: *CashDrawer2Setting
+*CloseGroup: *CashDrawerGroup
+*OpenGroup: *CashDrawerTune/Cash Drawer Tune
+*OpenUI *CashDrawer1PulseOn/Cash Drawer 1 pulse ON time: PickOne
+*OrderDependency: 9 DocumentSetup *CashDrawer1PulseOn
+*DefaultCashDrawer1PulseOn: 40XMS
+*CashDrawer1PulseOn None/None: ""
+*CashDrawer1PulseOn 10XMS/32mS: "<</cupsInteger2 16>>setpagedevice"
+*CashDrawer1PulseOn 20XMS/64mS: "<</cupsInteger2 32>>setpagedevice"
+*CashDrawer1PulseOn 30XMS/96mS: "<</cupsInteger2 48>>setpagedevice"
+*CashDrawer1PulseOn 40XMS/128mS: "<</cupsInteger2 64>>setpagedevice"
+*CashDrawer1PulseOn 50XMS/160mS: "<</cupsInteger2 80>>setpagedevice"
+*CashDrawer1PulseOn 60XMS/192mS: "<</cupsInteger2 96>>setpagedevice"
+*CashDrawer1PulseOn 70XMS/224mS: "<</cupsInteger2 112>>setpagedevice"
+*CashDrawer1PulseOn 80XMS/256mS: "<</cupsInteger2 128>>setpagedevice"
+*CloseUI: *CashDrawer1PulseOn
+*OpenUI *CashDrawer1PulseOff/Cash Drawer 1 pulse OFF time: PickOne
+*OrderDependency: 9 DocumentSetup *CashDrawer1PulseOff
+*DefaultCashDrawer1PulseOff: 50XMS
+*CashDrawer1PulseOff None/None: ""
+*CashDrawer1PulseOff 10XMS/32mS: "<</cupsInteger3 16>>setpagedevice"
+*CashDrawer1PulseOff 20XMS/64mS: "<</cupsInteger3 32>>setpagedevice"
+*CashDrawer1PulseOff 30XMS/96mS: "<</cupsInteger3 48>>setpagedevice"
+*CashDrawer1PulseOff 40XMS/128mS: "<</cupsInteger3 64>>setpagedevice"
+*CashDrawer1PulseOff 50XMS/160mS: "<</cupsInteger3 80>>setpagedevice"
+*CashDrawer1PulseOff 60XMS/192mS: "<</cupsInteger3 96>>setpagedevice"
+*CashDrawer1PulseOff 70XMS/224mS: "<</cupsInteger3 112>>setpagedevice"
+*CashDrawer1PulseOff 80XMS/256mS: "<</cupsInteger3 128>>setpagedevice"
+*CloseUI: *CashDrawer1PulseOff
+*OpenUI *CashDrawer2PulseOn/Cash Drawer 2 pulse ON time: PickOne
+*OrderDependency: 9 DocumentSetup *CashDrawer2PulseOn
+*DefaultCashDrawer2PulseOn: 40XMS
+*CashDrawer2PulseOn None/None: ""
+*CashDrawer2PulseOn 10XMS/32mS: "<</cupsInteger4 16>>setpagedevice"
+*CashDrawer2PulseOn 20XMS/64mS: "<</cupsInteger4 32>>setpagedevice"
+*CashDrawer2PulseOn 30XMS/96mS: "<</cupsInteger4 48>>setpagedevice"
+*CashDrawer2PulseOn 40XMS/128mS: "<</cupsInteger4 64>>setpagedevice"
+*CashDrawer2PulseOn 50XMS/160mS: "<</cupsInteger4 80>>setpagedevice"
+*CashDrawer2PulseOn 60XMS/192mS: "<</cupsInteger4 96>>setpagedevice"
+*CashDrawer2PulseOn 70XMS/224mS: "<</cupsInteger4 112>>setpagedevice"
+*CashDrawer2PulseOn 80XMS/256mS: "<</cupsInteger4 128>>setpagedevice"
+*CloseUI: *CashDrawer2PulseOn
+*OpenUI *CashDrawer2PulseOff/Cash Drawer 2 pulse OFF time: PickOne
+*OrderDependency: 9 DocumentSetup *CashDrawer2PulseOff
+*DefaultCashDrawer2PulseOff: 50XMS
+*CashDrawer2PulseOff None/None: ""
+*CashDrawer2PulseOff 10XMS/32mS: "<</cupsInteger5 16>>setpagedevice"
+*CashDrawer2PulseOff 20XMS/64mS: "<</cupsInteger5 32>>setpagedevice"
+*CashDrawer2PulseOff 30XMS/96mS: "<</cupsInteger5 48>>setpagedevice"
+*CashDrawer2PulseOff 40XMS/128mS: "<</cupsInteger5 64>>setpagedevice"
+*CashDrawer2PulseOff 50XMS/160mS: "<</cupsInteger5 80>>setpagedevice"
+*CashDrawer2PulseOff 60XMS/192mS: "<</cupsInteger5 96>>setpagedevice"
+*CashDrawer2PulseOff 70XMS/224mS: "<</cupsInteger5 112>>setpagedevice"
+*CashDrawer2PulseOff 80XMS/256mS: "<</cupsInteger5 128>>setpagedevice"
+*CloseUI: *CashDrawer2PulseOff
+*OpenUI *Resolution/Resolution: PickOne
+*OrderDependency: 10 AnySetup *Resolution
+*DefaultResolution: 203x203dpi
+*Resolution 203x203dpi/203 DPI Grayscale: "<</HWResolution[203 203]/cupsColorSpace 3>>setpagedevice"
+*CloseUI: *Resolution
+*CloseGroup: *CashDrawerTune
+*DefaultFont: Courier
+*% End of zj58.ppd, 10245 bytes.

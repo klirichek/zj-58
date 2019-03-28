@@ -3,6 +3,9 @@
 # Installs zj-58 driver
 # Tested as working under Ubuntu 14.04
 
+# Deprecated. Don't use this script;
+# use build with cmake and then 'make install' instead
+
 /etc/init.d/cups stop
 cp rastertozj /usr/lib/cups/filter/
 mkdir -p /usr/share/cups/model/zjiang
