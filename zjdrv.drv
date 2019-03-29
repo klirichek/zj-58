@@ -212,8 +212,8 @@ Installable "OptionCutter/Cutter"
     PCFileName "tm20.ppd"
     Attribute "NickName" "" "Epson TM-T20"
     Attribute "ShortNickName" "" "TM-T20"
-    Attribute "Product" "" "(TM-T20)"
-    Attribute "1MFG:Epson;CMD:Epson;MDL:TMT20;CLS:PRINTER;"
+    Attribute "Product" "" "(tm-t20)"
+    Attribute "1284DeviceID" "" "MFG:Epson;CMD:Epson;MDL:TMT20;CLS:PRINTER;"
   }
 }
 
