@@ -208,7 +208,7 @@ typedef void (*__sighandler_t)(int);
 
 __sighandler_t old_signal;
 void finishPage() {
-  signal(15, old_signal);
+  signal(SIGTERM, old_signal);
 }
 
 // sent on job canceling
@@ -220,7 +220,7 @@ void cancelJob() {
 }
 
 // invoked before starting to print a page
-void startPage() { old_signal = signal(15, cancelJob); }
+void startPage() { old_signal = signal(SIGTERM, cancelJob); }
 
 void DebugPrintHeader (cups_page_header2_t* pHeader)
 {
@@ -387,6 +387,9 @@ static inline void send_raster(const unsigned char *pBuf, int width8,
 //////////////////////////////////////////////
 //////////////////////////////////////////////
 int main(int argc, char *argv[]) {
+
+  signal(SIGPIPE, SIG_IGN);
+
   if (argc < 6 || argc > 7) {
     fputs("ERROR: rastertozj job-id user title copies options [file]\n",
           stderr);
