@@ -75,6 +75,12 @@ endif()
 set ( CMAKE_INSTALL_PREFIX "/" CACHE FILEPATH "this is forced to /" FORCE )
 set ( CPACK_PACKAGING_INSTALL_PREFIX "/" )
 set ( CPACK_PACKAGE_CONTACT "Alexey N. Vinogradov (a.n.vinogradov@gmail.com)" )
+set ( CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE" )
+set ( CPACK_PACKAGE_DESCRIPTION_SUMMARY "CUPS filter (driver) for thermal receipt printers" )
+
+set ( CPACK_SOURCE_IGNORE_FILES "/\\\\.idea/" "/\\\\.git/"
+		"/build/" "/cmake-*" )
+set ( CPACK_SOURCE_GENERATOR TGZ )
 
 set ( CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON )
 set ( CPACK_DEBIAN_PACKAGE_PREDEPENDS "libcups2-dev, libcupsimage2-dev" )
