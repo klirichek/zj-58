@@ -66,7 +66,7 @@ Installation implies restarting CUPS service, and also putting built files to sy
 
 Cmake script has both installation scenarios for Linux and Mac Os X.
 
-*IMPORTANT!* If you upgrade from previous version of the filter, you NEED to manually change PPD file to one from this sources.
+*IMPORTANT!* If you upgrade from previous version of the filter, you NEED to manually reconfigure your previous printer and explicitly select the PPD file from here.
 CUPS by default will not do it, and previous PPD with this filter will fail end even crash the job. So, if you previously used the driver from this repository, and it became crashing after installing this one, you need to go to printer's preferences and select 'new' driver instead of previous cached by CUPS.
 
 Configuring
