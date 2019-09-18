@@ -118,7 +118,7 @@ inline int getOptionChoiceIndex(const char * choiceName, ppd_file_t * ppd)
 }
 
 
-inline void initializeSettings(char * commandLineOptionSettings)
+void initializeSettings(char * commandLineOptionSettings)
 {
 	ppd_file_t *    ppd         = NULL;
 	cups_option_t * options     = NULL;
