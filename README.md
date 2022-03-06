@@ -14,10 +14,15 @@ PPD is fixed and works.
 Filter is provided as src (you can found a list of packages need to be installed in order to build it in the header of source).
 Also, printing of blank lines is optimized.
 
-In order to re-compile the binary (e.g. on a Raspberry Pi), the following libraries must be installed:
+In order to re-compile the binary (e.g. on a Raspberry Pi), the following libraries must be installed.
 
+On Debian-based distros (e.g. Raspberry OS, Ubuntu, Mint...) run:
 ```
 sudo apt-get install libcups2-dev libcupsimage2-dev g++ cups cups-client
 ```
+On Arch-based distros (e.g. Arch, Manjaro...) run:
+```
+sudo pacman -S base-devel cups cups-filters cups-pdf libcups system-config-printer lib32-libcups cups-pk-helper
+```
 
-After that, `make` and `install` do the right thing.
+After that, `make` and `sudo ./install` do the right thing.
