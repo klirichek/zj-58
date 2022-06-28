@@ -72,7 +72,7 @@ static inline void mputchar(char c) {
   putchar(m);
 }
 // on macos cups filters works in a sandbox and cant write
-// filtes everywhere. We'll use $TMPDIR/debugraster.txt for them
+// files everywhere. We'll use $TMPDIR/debugraster.txt for them
 #ifdef SAFEDEBUG
 static inline void DEBUGSTARTPRINT() {
   char * tmpfolder = getenv("TMPDIR");

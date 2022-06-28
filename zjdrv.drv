@@ -217,3 +217,29 @@ Installable "OptionCutter/Cutter"
   }
 }
 
+// 210mm printers
+{
+  #define POINTS 595
+  #define PIXELS 1680
+
+  // model num is used by filter to determine raster width. 58 -> 0x180, 80 -> 0x240.
+  ModelNumber $PIXELS
+  MinSize $POINTS 56
+  MaxSize $POINTS 9286
+
+ *CustomMedia "X210MMY297MM/210mm x 297mm" $POINTS 842 0 0 0 0 "<</PageSize[$POINTS 842]>>setpagedevice" "<</PageSize[$POINTS 842]>>setpagedevice"
+  CustomMedia "X210MMY65MM/210mm x 65mm" $POINTS 182 0 0 0 0 "<</PageSize[$POINTS 182]>>setpagedevice" "<</PageSize[$POINTS 182]>>setpagedevice"
+  CustomMedia "X210MMY3276MM/210mm x 3276mm" $POINTS 9286 0 0 0 0 "<</PageSize[$POINTS 9286]>>setpagedevice" "<</PageSize[$POINTS 9286]>>setpagedevice"
+
+  // GOOJPRT A4
+  {
+    Manufacturer "Goojprt"
+    ModelName "A4"
+    PCFileName "goojprt-a4.ppd"
+    Attribute "NickName" "" "Goojprt A4"
+    Attribute "ShortNickName" "" "JP_A4"
+    Attribute "Product" "" "(jp-a4)"
+    Attribute "1284DeviceID" "" "MFG:Goojprt;CMD:Goojprt;MDL:A4;CLS:PRINTER;"
+  }
+}
+
