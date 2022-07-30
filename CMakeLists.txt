@@ -55,6 +55,7 @@ if ( PPDC )
 	list (APPEND PPDS "${PPDDIR}/xp58.ppd" )
 	list (APPEND PPDS "${PPDDIR}/tm20.ppd" )
 	list (APPEND PPDS "${PPDDIR}/zj80.ppd" )
+	list (APPEND PPDS "${PPDDIR}/has181.ppd" )
 	ADD_CUSTOM_COMMAND ( OUTPUT ${PPDS}
 			COMMAND LANG=c ${PPDC} ${DRVSRC}
 			MAIN_DEPENDENCY ${DRVSRC}
