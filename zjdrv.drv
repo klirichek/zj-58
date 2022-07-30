@@ -215,5 +215,37 @@ Installable "OptionCutter/Cutter"
     Attribute "Product" "" "(tm-t20)"
     Attribute "1284DeviceID" "" "MFG:Epson;CMD:Epson;MDL:TMT20;CLS:PRINTER;"
   }
+  // Hasar P-Has-181
+  {
+    Manufacturer "Hasar"
+    ModelName "P-HAS-181"
+    PCFileName "has181.ppd"
+    Attribute "NickName" "" "Hasar Has-181"
+    Attribute "ShortNickName" "" "HAS-181"
+    Attribute "Product" "" "(Has-181)"
+    Attribute "0100DeviceID" "" "MFG:Gainscha;CMD:Hasar;MDL:HAS181;CLS:PRINTER;"  
+Installable "OptionCutter/Cutter"
+    UIConstraints "*CutMedia *OptionCutter True"
+  Option "CutMedia/Cut Media" PickOne AnySetup 10
+    Choice "None/No cutting" "<</CutMedia 0>>setpagedevice"
+    Choice "EndOfPage/Cut at every page" "<</CutMedia 4>>setpagedevice"
+   *Choice "EndOfJob/Cut at every job" "<</CutMedia 2>>setpagedevice"
+Group "BlankGroup/Blank Options"
+  Option "FeedDist/Feed distance" PickOne AnySetup 10
+    Choice "0feed3mm/3mm" "<</AdvanceDistance 24>>setpagedevice"
+    Choice "1feed6mm/6mm" "<</AdvanceDistance 48>>setpagedevice"
+    Choice "2feed9mm/9mm" "<</AdvanceDistance 72>>setpagedevice"
+    Choice "3feed12mm/12mm" "<</AdvanceDistance 96>>setpagedevice"
+    Choice "4feed15mm/15mm" "<</AdvanceDistance 120>>setpagedevice"
+    Choice "5feed18mm/18mm" "<</AdvanceDistance 144>>setpagedevice"
+    Choice "6feed21mm/21mm" "<</AdvanceDistance 168>>setpagedevice"
+    Choice "7feed24mm/24mm" "<</AdvanceDistance 192>>setpagedevice"
+    Choice "8feed27mm/27mm" "<</AdvanceDistance 216>>setpagedevice"
+    *Choice "9feed30mm/30mm" "<</AdvanceDistance 240>>setpagedevice"
+    Choice "10feed33mm/33mm" "<</AdvanceDistance 264>>setpagedevice"
+    Choice "11feed36mm/36mm" "<</AdvanceDistance 288>>setpagedevice"
+    Choice "12feed39mm/39mm" "<</AdvanceDistance 312>>setpagedevice"
+    Choice "13feed42mm/42mm" "<</AdvanceDistance 336>>setpagedevice"
+    Choice "14feed45mm/45mm" "<</AdvanceDistance 360>>setpagedevice"
+   }
 }
-
