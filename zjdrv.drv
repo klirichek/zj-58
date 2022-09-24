@@ -248,4 +248,24 @@ Group "BlankGroup/Blank Options"
     Choice "13feed42mm/42mm" "<</AdvanceDistance 336>>setpagedevice"
     Choice "14feed45mm/45mm" "<</AdvanceDistance 360>>setpagedevice"
    }
+     // Kross TP-T 700
+  {
+    Manufacturer "Kross"
+    ModelName "TP-T 700"
+    PCFileName "KrossTPT700.ppd"
+    Attribute "NickName" "" "Kross TP-T 700"
+    Attribute "ShortNickName" "" "TP-T 700"
+    Attribute "Product" "" "(TP-T700)"
+    Attribute "0100DeviceID" "" "MFG:Kross;CMD:Kross;MDL:KROSSTP700;CLS:PRINTER;"  
+Installable "OptionCutter/Cutter"
+    UIConstraints "*CutMedia *OptionCutter True"
+  Option "CutMedia/Cut Media" PickOne AnySetup 10
+    Choice "None/No cutting" "<</CutMedia 0>>setpagedevice"
+    Choice "EndOfPage/Cut at every page" "<</CutMedia 4>>setpagedevice"
+   *Choice "EndOfJob/Cut at every job" "<</CutMedia 2>>setpagedevice"
+Group "BlankGroup/Blank Options"
+  Option "FeedDist/Feed distance" PickOne AnySetup 10
+    *Choice "4feed15mm/15mm" "<</AdvanceDistance 120>>setpagedevice"
+    Choice "5feed18mm/18mm" "<</AdvanceDistance 144>>setpagedevice"
+  }
 }
