@@ -56,6 +56,7 @@ if ( PPDC )
 	list (APPEND PPDS "${PPDDIR}/tm20.ppd" )
 	list (APPEND PPDS "${PPDDIR}/zj80.ppd" )
 	list (APPEND PPDS "${PPDDIR}/has181.ppd" )
+	list (APPEND PPDS "${PPDDIR}/KrossTPT700.ppd" )
 	ADD_CUSTOM_COMMAND ( OUTPUT ${PPDS}
 			COMMAND LANG=c ${PPDC} ${DRVSRC}
 			MAIN_DEPENDENCY ${DRVSRC}
@@ -113,4 +114,3 @@ elseif ( UNIX )
 endif()
 
 include (CPack)
-
