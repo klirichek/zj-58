@@ -176,6 +176,17 @@ Installable "OptionCutter/Cutter"
     Attribute "Product" "" "(xp-58)"
     Attribute "1284DeviceID" "" "MFG:J-speed;CMD:Xprinter;MDL:XP-58;CLS:PRINTER;"
   }
+
+  // Epson TM-P20
+  {
+    Manufacturer "Epson"
+    ModelName "TM-P20"
+    PCFileName "tmp20.ppd"
+    Attribute "NickName" "" "Epson TM-P20"
+    Attribute "ShortNickName" "" "TM-P20"
+    Attribute "Product" "" "(tm-P20)"
+    Attribute "1284DeviceID" "" "MFG:Epson;CMD:Epson;MDL:TMP20;CLS:PRINTER;"
+  }
 }
 
 // 80mm printers
