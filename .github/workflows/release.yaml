@@ -1,0 +1,53 @@
+name: Build tools
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '^1.21'
+      id: go
+
+    - name: Set up nFPM
+      run: |
+        echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | sudo tee /etc/apt/sources.list.d/goreleaser.list
+        sudo apt update
+
+    - name: Install deps
+      run: sudo apt install -y build-essential cmake libcups2-dev libcupsimage2-dev tar gzip nfpm
+   
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v4
+      with:
+        lfs: true
+        fetch-depth: 0
+    
+    - name: Build
+      run: |
+        mkdir -p build
+        cd build
+        cmake ../
+        cmake --build .
+        sudo make install
+
+        tar -C / -zcvf driver.tar.gz /usr/lib/cups/filter/rastertozj /usr/share/cups/model/zjiang/zj58.ppd /usr/share/cups/model/zjiang/zj80.ppd
+
+    - name: Package
+      run: |
+        cd ci
+        yq e -i ".version = \"${GITHUB_REF_NAME/#v}\"" nfpm.yaml
+        nfpm pkg --packager deb --target ../build/zj58-amd64.deb
+
+    - name: Create release
+      run: |
+        cd build
+        gh release create --generate-notes "${GITHUB_REF_NAME}" zj58-amd64.deb driver.tar.gz
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
