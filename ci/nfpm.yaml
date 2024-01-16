@@ -1,0 +1,24 @@
+name: "zj-58"
+arch: "amd64"
+platform: "linux"
+section: "default"
+priority: "extra"
+version: "to-be-replaced"
+provides:
+- zj-58
+depends:
+- libcups2
+- libcupsimage2
+maintainer: "Aleksey N. Vinogradov  <a.n.vinogradov@gmail.com>"
+description: |
+  CUPS filter for thermal printers as Zjiang ZJ-58, XPrinter XP-58, etc 
+vendor: "Zjiang"
+homepage: "https://github.com/klirichek/zj-58"
+license: "BSD-2-Clause"
+contents:
+- src: /usr/lib/cups/filter/rastertozj
+  dst: /usr/lib/cups/filter/rastertozj
+- src: /usr/share/cups/model/zjiang/zj58.ppd
+  dst: /usr/share/cups/model/zjiang/zj58.ppd
+- src: /usr/share/cups/model/zjiang/zj80.ppd
+  dst: /usr/share/cups/model/zjiang/zj80.ppd
